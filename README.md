@@ -1,5 +1,7 @@
 # Dialogue
 
+[![Build Status](https://travis-ci.org/Richard70NL/dialogue.svg?branch=master)](https://travis-ci.org/Richard70NL/dialogue)
+
 ## Introduction
 
 An NNTP server implementation written in Rust.
