@@ -9,7 +9,7 @@ readme = "README.md"
 keywords = ["nntp", "server"]
 categories = ["command-line-utilities", "network-programming"]
 license = "MIT"
-include = ["**/*.rs", "Cargo.toml"]
+include = ["**/*.rs", "Cargo.toml", "README.md", "LICENSE"]
 
 [dependencies]
 
