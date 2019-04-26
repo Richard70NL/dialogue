@@ -12,3 +12,6 @@ license = "MIT"
 include = ["**/*.rs", "Cargo.toml"]
 
 [dependencies]
+
+[badges]
+travis-ci = {repository = "Richard70NL/dialogue"}
