@@ -2,7 +2,11 @@
 
 pub enum Text {
     /*------------------------------------------------------------------------------------------*/
+    CliVerboseHelp,
+    CliListenAbout,
+    /*------------------------------------------------------------------------------------------*/
     ErrorDialogueExit,
+    ErrorWriteLongHelp,
     /*------------------------------------------------------------------------------------------*/
 }
 
@@ -11,7 +15,11 @@ pub enum Text {
 pub fn s(text: Text) -> &'static str {
     match text {
         /*--------------------------------------------------------------------------------------*/
+        Text::CliVerboseHelp => "Use verbose output.",
+        Text::CliListenAbout => "Start the server and listen to incomming connections.",
+        /*--------------------------------------------------------------------------------------*/
         Text::ErrorDialogueExit => "Dialogue exits with the following error(s):",
+        Text::ErrorWriteLongHelp => "An error occured while writing the help information.",
         /*--------------------------------------------------------------------------------------*/
     }
 }

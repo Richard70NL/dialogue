@@ -1,6 +1,6 @@
 [package]
 name = "dialogue"
-version = "0.0.0"
+version = "0.1.0"
 authors = ["Richard70NL <richard@richard70.nl>"]
 edition = "2018"
 description = "An NNTP server implementation written in Rust."
@@ -12,6 +12,7 @@ license = "MIT"
 include = ["**/*.rs", "Cargo.toml", "README.md", "LICENSE"]
 
 [dependencies]
+clap = "2.33.0"
 
 [badges]
 travis-ci = {repository = "Richard70NL/dialogue"}
