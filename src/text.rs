@@ -6,6 +6,9 @@ pub enum Text {
     CliStartAbout,
     CliStopAbout,
     CliInstallAbout,
+    CliDatabaseUrlHelp,
+    CliAddressHelp,
+    CliPortHelp,
     /*------------------------------------------------------------------------------------------*/
     ErrorDialogueExit,
     ErrorWriteLongHelp,
@@ -22,6 +25,9 @@ pub fn s(text: Text) -> &'static str {
         Text::CliStartAbout => "Start the server and listen for incomming connections.",
         Text::CliStopAbout => "Stop a running server.",
         Text::CliInstallAbout => "Installs or upgrades the database schema.",
+        Text::CliDatabaseUrlHelp => "Database connect string.",
+        Text::CliAddressHelp => "Binding IP address.",
+        Text::CliPortHelp => "Binding to port.",
         /*--------------------------------------------------------------------------------------*/
         Text::ErrorDialogueExit => "Dialogue exits with the following error(s):",
         Text::ErrorWriteLongHelp => "An error occured while writing the help information.",
