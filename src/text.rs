@@ -44,7 +44,7 @@ pub fn so(text: Text) -> String {
 
 /************************************************************************************************/
 
-pub fn sr(text: Text, values: &[&str]) -> String {
+pub fn _sr(text: Text, values: &[&str]) -> String {
     let mut msg = String::from(s(text));
 
     for (i, v) in values.iter().enumerate() {
