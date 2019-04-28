@@ -37,13 +37,13 @@ impl Verbose {
 
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn increate_indent(&mut self) {
+    pub fn _increate_indent(&mut self) {
         self.indent += 1;
     }
 
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn decrease_indent(&mut self) {
+    pub fn _decrease_indent(&mut self) {
         if self.indent > 0 {
             self.indent -= 1;
         }
