@@ -3,10 +3,13 @@
 pub enum Text {
     /*------------------------------------------------------------------------------------------*/
     CliVerboseHelp,
-    CliListenAbout,
+    CliStartAbout,
+    CliStopAbout,
+    CliInstallAbout,
     /*------------------------------------------------------------------------------------------*/
     ErrorDialogueExit,
     ErrorWriteLongHelp,
+    ErrorInvalidCommand,
     /*------------------------------------------------------------------------------------------*/
 }
 
@@ -16,10 +19,13 @@ pub fn s(text: Text) -> &'static str {
     match text {
         /*--------------------------------------------------------------------------------------*/
         Text::CliVerboseHelp => "Use verbose output.",
-        Text::CliListenAbout => "Start the server and listen to incomming connections.",
+        Text::CliStartAbout => "Start the server and listen for incomming connections.",
+        Text::CliStopAbout => "Stop a running server.",
+        Text::CliInstallAbout => "Installs or upgrades the database schema.",
         /*--------------------------------------------------------------------------------------*/
         Text::ErrorDialogueExit => "Dialogue exits with the following error(s):",
         Text::ErrorWriteLongHelp => "An error occured while writing the help information.",
+        Text::ErrorInvalidCommand => "Invalid command.",
         /*--------------------------------------------------------------------------------------*/
     }
 }

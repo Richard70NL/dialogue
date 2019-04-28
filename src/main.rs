@@ -38,16 +38,37 @@ fn main() {
 /************************************************************************************************/
 
 fn run() -> Result<(), DialogueError> {
-    let mut app = app_from_crate!().subcommand(
-        SubCommand::with_name(COMMAND_LISTEN_NAME)
-            .about(s(CliListenAbout))
-            .arg(
-                Arg::with_name(ARG_VERBOSE_NAME)
-                    .short(ARG_VERBOSE_SHORT)
-                    .long(ARG_VERBOSE_LONG)
-                    .help(s(CliVerboseHelp)),
-            ),
-    );
+    let mut app = app_from_crate!()
+        .subcommand(
+            SubCommand::with_name(COMMAND_START_NAME)
+                .about(s(CliStartAbout))
+                .arg(
+                    Arg::with_name(ARG_VERBOSE_NAME)
+                        .short(ARG_VERBOSE_SHORT)
+                        .long(ARG_VERBOSE_LONG)
+                        .help(s(CliVerboseHelp)),
+                ),
+        )
+        .subcommand(
+            SubCommand::with_name(COMMAND_STOP_NAME)
+                .about(s(CliStopAbout))
+                .arg(
+                    Arg::with_name(ARG_VERBOSE_NAME)
+                        .short(ARG_VERBOSE_SHORT)
+                        .long(ARG_VERBOSE_LONG)
+                        .help(s(CliVerboseHelp)),
+                ),
+        )
+        .subcommand(
+            SubCommand::with_name(COMMAND_INSTALL_NAME)
+                .about(s(CliInstallAbout))
+                .arg(
+                    Arg::with_name(ARG_VERBOSE_NAME)
+                        .short(ARG_VERBOSE_SHORT)
+                        .long(ARG_VERBOSE_LONG)
+                        .help(s(CliVerboseHelp)),
+                ),
+        );
 
     let matches = app.clone().get_matches();
 
@@ -70,8 +91,11 @@ fn run() -> Result<(), DialogueError> {
                 verbose.enable();
             }
 
-            if cmd.name == COMMAND_LISTEN_NAME {
-                unimplemented!();
+            match cmd.name.as_str() {
+                COMMAND_START_NAME => unimplemented!(),
+                COMMAND_STOP_NAME => unimplemented!(),
+                COMMAND_INSTALL_NAME => unimplemented!(),
+                &_ => Err(DialogueError::new(so(ErrorInvalidCommand)))?,
             }
 
             Ok(())
