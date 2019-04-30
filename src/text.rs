@@ -13,6 +13,7 @@ pub enum Text {
     ErrorDialogueExit,
     ErrorWriteLongHelp,
     ErrorInvalidCommand,
+    ErrorBindingListener,
     /*------------------------------------------------------------------------------------------*/
 }
 
@@ -32,6 +33,7 @@ pub fn s(text: Text) -> &'static str {
         Text::ErrorDialogueExit => "Dialogue exits with the following error(s):",
         Text::ErrorWriteLongHelp => "An error occured while writing the help information.",
         Text::ErrorInvalidCommand => "Invalid command.",
+        Text::ErrorBindingListener => "Error while binding to address {1} on port {2}",
         /*--------------------------------------------------------------------------------------*/
     }
 }
@@ -44,7 +46,7 @@ pub fn so(text: Text) -> String {
 
 /************************************************************************************************/
 
-pub fn _sr(text: Text, values: &[&str]) -> String {
+pub fn sr(text: Text, values: &[&str]) -> String {
     let mut msg = String::from(s(text));
 
     for (i, v) in values.iter().enumerate() {

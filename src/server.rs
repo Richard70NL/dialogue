@@ -1,8 +1,13 @@
 /************************************************************************************************/
 
 use crate::constants::*;
+use crate::error::DialogueError;
+use crate::text::sr;
+use crate::text::Text::*;
 use std::net::IpAddr;
 use std::net::Ipv4Addr;
+use std::net::SocketAddr;
+use std::net::TcpListener;
 
 /************************************************************************************************/
 
@@ -46,10 +51,21 @@ impl Server {
 
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn start(&self) {
-        dbg!(self);
+    pub fn start(&self) -> Result<(), DialogueError> {
+        let bind_addr = SocketAddr::from((self.address, self.port));
+        let listener = TcpListener::bind(bind_addr).or_else(|e| {
+            Err(DialogueError::new(format!("{:?}", e)).add(sr(
+                ErrorBindingListener,
+                &[&self.address.to_string(), &self.port.to_string()],
+            )))
+        })?;
 
-        unimplemented!();
+        loop {
+            match listener.accept() {
+                Ok((_socket, addr)) => println!("new client: {:?}", addr),
+                Err(e) => println!("couldn't get client: {:?}", e),
+            }
+        }
     }
 
     /*------------------------------------------------------------------------------------------*/

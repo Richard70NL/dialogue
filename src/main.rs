@@ -121,7 +121,7 @@ fn run() -> Result<(), DialogueError> {
                     let address = cmd.matches.value_of(ARG_ADDRESS_NAME).unwrap(); // FIXME unwrap
                     let port = cmd.matches.value_of(ARG_PORT_NAME).unwrap(); // FIXME unwrap
                     let dburl = cmd.matches.value_of(ARG_DATABASE_URL_NAME).unwrap(); // FIXME unwrap
-                    start_server(&verbose, address, port, dburl)
+                    start_server(&verbose, address, port, dburl)?
                 }
                 COMMAND_STOP_NAME => stop_server(),
                 COMMAND_INSTALL_NAME => install_database_schema(),
@@ -135,7 +135,12 @@ fn run() -> Result<(), DialogueError> {
 
 /************************************************************************************************/
 
-fn start_server(verbose: &Verbose, address: &str, port: &str, dburl: &str) {
+fn start_server(
+    verbose: &Verbose,
+    address: &str,
+    port: &str,
+    dburl: &str,
+) -> Result<(), DialogueError> {
     verbose.println("Initializing the server."); // FIXME use text module
     let mut server = Server::new();
     server.set_binding_address(IpAddr::from_str(address).unwrap()); // FIXME unwrap
@@ -143,9 +148,11 @@ fn start_server(verbose: &Verbose, address: &str, port: &str, dburl: &str) {
     server.set_database_url(String::from(dburl));
 
     verbose.println("Start the server."); // FIXME use text module
-    server.start();
+    server.start()?;
 
     verbose.println("Done!"); // FIXME use text module
+
+    Ok(())
 }
 
 /************************************************************************************************/
