@@ -3,4 +3,4 @@
 # - Set address to 127.0.0.1 to bind to the loopback address which limits
 #   access to the localhost only (best option during development).
 # - Or set address to specific IP.
-cargo run -- start --verbose --address=127.0.0.1
+cargo run -- start --verbose --address=::
