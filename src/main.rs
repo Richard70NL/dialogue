@@ -2,6 +2,7 @@
 
 mod constants;
 mod error;
+mod log;
 mod server;
 mod text;
 mod verbose;

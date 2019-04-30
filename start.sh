@@ -4,4 +4,5 @@
 # - Set address to 127.0.0.1 (::1 for IPv6) to bind to the loopback address
 #   which limits access to the localhost only (best option during development).
 # - Or set address to specific IP.
-cargo run -- start --verbose --address=127.0.0.1
+cargo build
+sudo cargo run -- start --verbose --address=127.0.0.1

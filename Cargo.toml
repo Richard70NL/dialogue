@@ -13,6 +13,7 @@ include = ["**/*.rs", "Cargo.toml", "README.md", "LICENSE"]
 
 [dependencies]
 clap = "2.33.0"
+chrono = "0.4.6"
 
 [badges]
 travis-ci = {repository = "Richard70NL/dialogue"}
