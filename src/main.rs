@@ -57,7 +57,8 @@ fn run() -> Result<(), DialogueError> {
                         .short(ARG_ADDRESS_SHORT)
                         .long(ARG_ADDRESS_LONG)
                         .help(s(CliAddressHelp))
-                        .default_value(DEFAULT_ADDRESS),
+                        .required(true)
+                        .takes_value(true),
                 )
                 .arg(
                     Arg::with_name(ARG_PORT_NAME)

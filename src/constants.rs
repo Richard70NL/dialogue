@@ -17,7 +17,6 @@ pub const COMMAND_INSTALL_NAME: &str = "install";
 pub const COMMAND_START_NAME: &str = "start";
 pub const COMMAND_STOP_NAME: &str = "stop";
 
-pub const DEFAULT_ADDRESS: &str = "0.0.0.0";
 pub const DEFAULT_DATA_BASE_URL: &str = "postgresql://dialogue@localhost/dialog";
 pub const DEFAULT_PORT: &str = "119";
 
