@@ -25,7 +25,7 @@ impl Server {
 
     pub fn new() -> Server {
         Server {
-            address: IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)),
+            address: IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)), // FIXME make address optional, don't assume 0.0.0.0 is correct
             port: 119,
             database_url: DEFAULT_DATA_BASE_URL.to_string(),
         }
