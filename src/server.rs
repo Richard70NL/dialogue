@@ -54,7 +54,11 @@ impl Server {
                 .add(sr(ErrorBindingListener, &[&self.address.to_string()])))
         })?;
 
-        LogMessage::new(String::from("Server starts listening.")).show(); // FIXME use text module
+        LogMessage::new(format!(
+            "Listening on {}.",
+            listener.local_addr().unwrap().to_string()
+        ))
+        .show(); // FIXME use text module
 
         loop {
             match listener.accept() {
