@@ -5,4 +5,4 @@
 #   which limits access to the localhost only (best option during development).
 # - Or set address to specific IP.
 cargo build
-sudo cargo run -- start --verbose --address=127.0.0.1
+sudo cargo run -- start --verbose --address 127.0.0.1:119

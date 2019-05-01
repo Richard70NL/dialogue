@@ -24,7 +24,7 @@ use crate::verbose::Verbose;
 use clap::Arg;
 use clap::SubCommand;
 use std::io;
-use std::net::IpAddr;
+use std::net::SocketAddr;
 use std::process::exit;
 use std::str::FromStr;
 
@@ -60,13 +60,6 @@ fn run() -> Result<(), DialogueError> {
                         .help(s(CliAddressHelp))
                         .required(true)
                         .takes_value(true),
-                )
-                .arg(
-                    Arg::with_name(ARG_PORT_NAME)
-                        .short(ARG_PORT_SHORT)
-                        .long(ARG_PORT_LONG)
-                        .help(s(CliPortHelp))
-                        .default_value(DEFAULT_PORT),
                 )
                 .arg(
                     Arg::with_name(ARG_DATABASE_URL_NAME)
@@ -121,9 +114,8 @@ fn run() -> Result<(), DialogueError> {
             match cmd.name.as_str() {
                 COMMAND_START_NAME => {
                     let address = cmd.matches.value_of(ARG_ADDRESS_NAME).unwrap(); // FIXME unwrap
-                    let port = cmd.matches.value_of(ARG_PORT_NAME).unwrap(); // FIXME unwrap
                     let dburl = cmd.matches.value_of(ARG_DATABASE_URL_NAME).unwrap(); // FIXME unwrap
-                    start_server(&verbose, address, port, dburl)?
+                    start_server(&verbose, address, dburl)?
                 }
                 COMMAND_STOP_NAME => stop_server(),
                 COMMAND_INSTALL_NAME => install_database_schema(),
@@ -137,16 +129,10 @@ fn run() -> Result<(), DialogueError> {
 
 /************************************************************************************************/
 
-fn start_server(
-    verbose: &Verbose,
-    address: &str,
-    port: &str,
-    dburl: &str,
-) -> Result<(), DialogueError> {
+fn start_server(verbose: &Verbose, address: &str, dburl: &str) -> Result<(), DialogueError> {
     verbose.println("Initializing the server."); // FIXME use text module
     let mut server = Server::new();
-    server.set_binding_address(IpAddr::from_str(address).unwrap()); // FIXME unwrap
-    server.set_binding_port(port.parse::<u16>().unwrap()); // FIXME unwrap
+    server.set_binding_address(SocketAddr::from_str(address).unwrap()); // FIXME unwrap
     server.set_database_url(String::from(dburl));
 
     verbose.println("Start the server."); // FIXME use text module

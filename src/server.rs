@@ -18,8 +18,7 @@ use std::thread::spawn;
 
 #[derive(Debug)]
 pub struct Server {
-    address: IpAddr, // FIXME join address and port into one SocketAddr
-    port: u16,
+    address: SocketAddr,
     database_url: String,
 }
 
@@ -30,22 +29,15 @@ impl Server {
 
     pub fn new() -> Server {
         Server {
-            address: IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)), // FIXME make address optional, don't assume 0.0.0.0 is correct
-            port: 119,
+            address: SocketAddr::new(IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)), 119), // FIXME make address optional, don't assume 0.0.0.0 is correct
             database_url: DEFAULT_DATA_BASE_URL.to_string(),
         }
     }
 
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn set_binding_address(&mut self, address: IpAddr) {
+    pub fn set_binding_address(&mut self, address: SocketAddr) {
         self.address = address;
-    }
-
-    /*------------------------------------------------------------------------------------------*/
-
-    pub fn set_binding_port(&mut self, port: u16) {
-        self.port = port;
     }
 
     /*------------------------------------------------------------------------------------------*/
@@ -57,12 +49,9 @@ impl Server {
     /*------------------------------------------------------------------------------------------*/
 
     pub fn start(&self) -> Result<(), DialogueError> {
-        let bind_addr = SocketAddr::from((self.address, self.port));
-        let listener = TcpListener::bind(bind_addr).or_else(|e| {
-            Err(DialogueError::new(format!("{:?}", e)).add(sr(
-                ErrorBindingListener,
-                &[&self.address.to_string(), &self.port.to_string()],
-            )))
+        let listener = TcpListener::bind(&self.address).or_else(|e| {
+            Err(DialogueError::new(format!("{:?}", e))
+                .add(sr(ErrorBindingListener, &[&self.address.to_string()])))
         })?;
 
         LogMessage::new(String::from("Server starts listening.")).show(); // FIXME use text module
