@@ -4,9 +4,9 @@ use crate::constants::*;
 use crate::error::DialogueError;
 use crate::log::LogMessage;
 use crate::log::LogMessageType::*;
+use crate::session::Session;
 use crate::text::sr;
 use crate::text::Text::*;
-use std::io::Write;
 use std::net::IpAddr;
 use std::net::Ipv4Addr;
 use std::net::SocketAddr;
@@ -90,14 +90,10 @@ impl Server {
 
     /*------------------------------------------------------------------------------------------*/
 
-    fn handle_connection(&self, mut stream: TcpStream) {
+    fn handle_connection(&self, stream: TcpStream) {
         let _handler = spawn(move || {
-            LogMessage::new(String::from("accepted connection")) // FIXME use text module
-                .set_response_code(100)
-                .set_client_addr(stream.peer_addr().unwrap())
-                .show();
-
-            let _ = stream.write(b"CONNECTED and CLOSED again...\n");
+            let mut session = Session::new(stream);
+            session.run();
         });
     }
 

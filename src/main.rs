@@ -4,6 +4,7 @@ mod constants;
 mod error;
 mod log;
 mod server;
+mod session;
 mod text;
 mod verbose;
 

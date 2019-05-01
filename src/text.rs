@@ -14,6 +14,11 @@ pub enum Text {
     ErrorInvalidCommand,
     ErrorBindingListener,
     /*------------------------------------------------------------------------------------------*/
+    LogConnectionAccepted,
+    /*------------------------------------------------------------------------------------------*/
+    ResponseServiceAvailPostAllowed,
+    ResponseServiceAvailPostProhibited,
+    /*------------------------------------------------------------------------------------------*/
 }
 
 /************************************************************************************************/
@@ -32,6 +37,11 @@ pub fn s(text: Text) -> &'static str {
         Text::ErrorWriteLongHelp => "An error occured while writing the help information.",
         Text::ErrorInvalidCommand => "Invalid command.",
         Text::ErrorBindingListener => "Error while binding to address {1}.",
+        /*--------------------------------------------------------------------------------------*/
+        Text::LogConnectionAccepted => "Connection accepted.",
+        /*--------------------------------------------------------------------------------------*/
+        Text::ResponseServiceAvailPostAllowed => "Service available, posting allowed.",
+        Text::ResponseServiceAvailPostProhibited => "Service available, posting prohibited.",
         /*--------------------------------------------------------------------------------------*/
     }
 }
