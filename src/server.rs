@@ -65,7 +65,7 @@ impl Server {
             )))
         })?;
 
-        LogMessage::new(100, String::from("Server starts listening.")).show(); // FIXME use text module
+        LogMessage::new(String::from("Server starts listening.")).show(); // FIXME use text module
 
         loop {
             match listener.accept() {
@@ -73,13 +73,13 @@ impl Server {
                     if self.accept_by_address(&addr) {
                         self.handle_connection(stream)
                     } else {
-                        LogMessage::new(400, format!("rejected connection from: {:?}", addr)) // FIXME use text module
+                        LogMessage::new(format!("rejected connection from: {:?}", addr)) // FIXME use text module
                             .set_type(Error)
                             .show();
                     }
                 }
                 Err(e) => {
-                    LogMessage::new(500, format!("couldn't get client: {:?}", e)) // FIXME use text module
+                    LogMessage::new(format!("couldn't get client: {:?}", e)) // FIXME use text module
                         .set_type(Error)
                         .show()
                 }
@@ -99,14 +99,10 @@ impl Server {
 
     fn handle_connection(&self, mut stream: TcpStream) {
         let _handler = spawn(move || {
-            LogMessage::new(
-                100,
-                format!(
-                    "accepted connection from: {:?}",
-                    stream.peer_addr().unwrap()
-                ), // FIXME use text module
-            )
-            .show();
+            LogMessage::new(String::from("accepted connection")) // FIXME use text module
+                .set_response_code(100)
+                .set_client_addr(stream.peer_addr().unwrap())
+                .show();
 
             let _ = stream.write(b"CONNECTED and CLOSED again...\n");
         });
