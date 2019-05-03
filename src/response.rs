@@ -21,9 +21,7 @@ impl Response {
 
     fn show(&self, writer: &mut BufWriter<&TcpStream>) {
         let m = format!("{} {}\n", self.code, self.message);
-
-        writer.write(m.as_bytes()).unwrap();
-        writer.flush().unwrap();
+        writer.write(m.as_bytes()).unwrap(); // FIXME unwrap
     }
 
     /*------------------------------------------------------------------------------------------*/

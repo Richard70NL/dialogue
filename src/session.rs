@@ -57,7 +57,7 @@ impl<'a> Session<'a> {
             match self.reader.read_line(&mut line) {
                 Ok(_len) => {
                     let command = parse_command_line(line.trim());
-                    writeln(&mut self.writer, &format!("echo: {:?}", command));
+                    self.writeln(&format!("echo: {:?}", command));
 
                     if command.len() > 0 {
                         match command[0].to_lowercase().as_str() {
@@ -76,6 +76,7 @@ impl<'a> Session<'a> {
                             ),
                         }
                     }
+                    self.writer.flush().unwrap();
                 }
                 Err(e) => eprintln!("{}", e), // FIXME write propper error response
             }
@@ -83,19 +84,18 @@ impl<'a> Session<'a> {
     }
 
     /*------------------------------------------------------------------------------------------*/
-}
 
-/************************************************************************************************/
+    fn write(&mut self, s: &str) {
+        self.writer.write(s.as_bytes()).unwrap(); // FIXME unwrap
+    }
 
-fn writeln(writer: &mut BufWriter<&TcpStream>, line: &str) {
-    write(writer, &format!("{}\n", line));
-}
+    /*------------------------------------------------------------------------------------------*/
 
-/************************************************************************************************/
+    fn writeln(&mut self, line: &str) {
+        self.write(&format!("{}\n", line));
+    }
 
-fn write(writer: &mut BufWriter<&TcpStream>, s: &str) {
-    writer.write(s.as_bytes()).unwrap();
-    writer.flush().unwrap();
+    /*------------------------------------------------------------------------------------------*/
 }
 
 /************************************************************************************************/
