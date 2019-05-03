@@ -11,19 +11,23 @@ use std::net::TcpStream;
 
 /************************************************************************************************/
 
-pub struct Session {
-    stream: TcpStream,
+pub struct Session<'a> {
+    stream: &'a TcpStream,
+    reader: BufReader<&'a TcpStream>,
+    writer: BufWriter<&'a TcpStream>,
     posting_allowed: bool,
 }
 
 /************************************************************************************************/
 
-impl Session {
+impl<'a> Session<'a> {
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn new(stream: TcpStream) -> Session {
+    pub fn new(stream: &TcpStream) -> Session {
         Session {
             stream: stream,
+            reader: BufReader::new(stream),
+            writer: BufWriter::new(stream),
             posting_allowed: false,
         }
     }
@@ -31,20 +35,18 @@ impl Session {
     /*------------------------------------------------------------------------------------------*/
 
     pub fn run(&mut self) {
-        let mut reader = BufReader::new(&self.stream);
-        let mut writer = BufWriter::new(&self.stream);
         let mut line = String::new();
         let peer_addr = self.stream.peer_addr().unwrap();
 
         if self.posting_allowed {
             SERVICE_AVAILABLE_POSTING_ALLOWED.show_and_log(
-                &mut writer,
+                &mut self.writer,
                 peer_addr,
                 s(LogConnectionAccepted),
             );
         } else {
             SERVICE_AVAILABLE_POSTING_PROHIBITED.show_and_log(
-                &mut writer,
+                &mut self.writer,
                 peer_addr,
                 s(LogConnectionAccepted),
             );
@@ -52,23 +54,23 @@ impl Session {
 
         'main_loop: loop {
             line.clear();
-            match reader.read_line(&mut line) {
+            match self.reader.read_line(&mut line) {
                 Ok(_len) => {
                     let command = parse_command_line(line.trim());
-                    writeln(&mut writer, &format!("echo: {:?}", command));
+                    writeln(&mut self.writer, &format!("echo: {:?}", command));
 
                     if command.len() > 0 {
                         match command[0].to_lowercase().as_str() {
                             "quit" | "exit" | "logout" => {
                                 CONNECTION_CLOSING.show_and_log_command(
-                                    &mut writer,
+                                    &mut self.writer,
                                     peer_addr,
                                     &command,
                                 );
                                 break 'main_loop;
                             }
                             &_ => UNKNOWN_COMMAND.show_and_log_command(
-                                &mut writer,
+                                &mut self.writer,
                                 peer_addr,
                                 &command,
                             ),
