@@ -3,6 +3,7 @@
 mod constants;
 mod error;
 mod log;
+mod response;
 mod server;
 mod session;
 mod text;

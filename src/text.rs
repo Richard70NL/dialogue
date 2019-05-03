@@ -16,9 +16,6 @@ pub enum Text {
     /*------------------------------------------------------------------------------------------*/
     LogConnectionAccepted,
     /*------------------------------------------------------------------------------------------*/
-    ResponseServiceAvailPostAllowed,
-    ResponseServiceAvailPostProhibited,
-    /*------------------------------------------------------------------------------------------*/
 }
 
 /************************************************************************************************/
@@ -39,9 +36,6 @@ pub fn s(text: Text) -> &'static str {
         Text::ErrorBindingListener => "Error while binding to address {1}.",
         /*--------------------------------------------------------------------------------------*/
         Text::LogConnectionAccepted => "Connection accepted.",
-        /*--------------------------------------------------------------------------------------*/
-        Text::ResponseServiceAvailPostAllowed => "Service available, posting allowed.",
-        Text::ResponseServiceAvailPostProhibited => "Service available, posting prohibited.",
         /*--------------------------------------------------------------------------------------*/
     }
 }

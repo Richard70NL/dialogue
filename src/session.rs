@@ -1,5 +1,6 @@
 /************************************************************************************************/
 
+use crate::constants::response::*;
 use crate::log::LogMessage;
 use crate::log::LogMessageType::*;
 use crate::text::s;
@@ -39,19 +40,15 @@ impl Session {
         let peer_addr = self.stream.peer_addr().unwrap();
 
         if self.posting_allowed {
-            write_response_and_log(
+            SERVICE_AVAILABLE_POSTING_ALLOWED.show(
                 &mut writer,
                 peer_addr,
-                200,
-                s(ResponseServiceAvailPostAllowed),
                 s(LogConnectionAccepted),
             );
         } else {
-            write_response_and_log(
+            SERVICE_AVAILABLE_POSTING_PROHIBITED.show(
                 &mut writer,
                 peer_addr,
-                201,
-                s(ResponseServiceAvailPostProhibited),
                 s(LogConnectionAccepted),
             );
         }

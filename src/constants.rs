@@ -22,3 +22,18 @@ pub mod default {
 }
 
 /************************************************************************************************/
+
+pub mod response {
+    use crate::response::Response;
+
+    pub const SERVICE_AVAILABLE_POSTING_ALLOWED: &Response = &Response {
+        code: 200,
+        message: "Service available, posting allowed.",
+    };
+    pub const SERVICE_AVAILABLE_POSTING_PROHIBITED: &Response = &Response {
+        code: 201,
+        message: "Service available, posting prohibited.",
+    };
+}
+
+/************************************************************************************************/
