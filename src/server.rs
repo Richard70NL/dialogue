@@ -1,6 +1,6 @@
 /************************************************************************************************/
 
-use crate::constants::*;
+use crate::constants::default::*;
 use crate::error::DialogueError;
 use crate::log::LogMessage;
 use crate::log::LogMessageType::*;
@@ -30,7 +30,7 @@ impl Server {
     pub fn new() -> Server {
         Server {
             address: SocketAddr::new(IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)), 119), // FIXME make address optional, don't assume 0.0.0.0 is correct
-            database_url: DEFAULT_DATA_BASE_URL.to_string(),
+            database_url: DATA_BASE_URL.to_string(),
         }
     }
 

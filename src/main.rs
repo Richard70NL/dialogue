@@ -15,7 +15,8 @@ extern crate clap;
 
 /************************************************************************************************/
 
-use crate::constants::*;
+use crate::constants::cli::*;
+use crate::constants::default::*;
 use crate::error::DialogueError;
 use crate::server::Server;
 use crate::text::s;
@@ -67,7 +68,7 @@ fn run() -> Result<(), DialogueError> {
                         .short(ARG_DATABASE_URL_SHORT)
                         .long(ARG_DATABASE_URL_LONG)
                         .help(s(CliDatabaseUrlHelp))
-                        .default_value(DEFAULT_DATA_BASE_URL),
+                        .default_value(DATA_BASE_URL),
                 ),
         )
         .subcommand(
