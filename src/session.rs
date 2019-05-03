@@ -40,13 +40,13 @@ impl Session {
         let peer_addr = self.stream.peer_addr().unwrap();
 
         if self.posting_allowed {
-            SERVICE_AVAILABLE_POSTING_ALLOWED.show(
+            SERVICE_AVAILABLE_POSTING_ALLOWED.show_and_log(
                 &mut writer,
                 peer_addr,
                 s(LogConnectionAccepted),
             );
         } else {
-            SERVICE_AVAILABLE_POSTING_PROHIBITED.show(
+            SERVICE_AVAILABLE_POSTING_PROHIBITED.show_and_log(
                 &mut writer,
                 peer_addr,
                 s(LogConnectionAccepted),
