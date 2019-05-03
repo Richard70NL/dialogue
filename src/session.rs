@@ -60,17 +60,17 @@ impl Session {
                     if command.len() > 0 {
                         match command[0].to_lowercase().as_str() {
                             "quit" | "exit" | "logout" => {
-                                CONNECTION_CLOSING.show_and_log(
+                                CONNECTION_CLOSING.show_and_log_command(
                                     &mut writer,
                                     peer_addr,
-                                    &format!("received: {:?}", command),
+                                    &command,
                                 );
                                 break 'main_loop;
                             }
-                            &_ => UNKNOWN_COMMAND.show_and_log(
+                            &_ => UNKNOWN_COMMAND.show_and_log_command(
                                 &mut writer,
                                 peer_addr,
-                                &format!("received: {:?}", command),
+                                &command,
                             ),
                         }
                     }
