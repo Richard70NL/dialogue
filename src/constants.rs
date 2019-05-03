@@ -34,6 +34,14 @@ pub mod response {
         code: 201,
         message: "Service available, posting prohibited.",
     };
+    pub const CONNECTION_CLOSING: &Response = &Response {
+        code: 205,
+        message: "Connection closing.",
+    };
+    pub const UNKNOWN_COMMAND: &Response = &Response {
+        code: 500,
+        message: "Unknown command.",
+    };
 }
 
 /************************************************************************************************/

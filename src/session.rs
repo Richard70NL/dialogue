@@ -1,15 +1,12 @@
 /************************************************************************************************/
 
 use crate::constants::response::*;
-use crate::log::LogMessage;
-use crate::log::LogMessageType::*;
 use crate::text::s;
 use crate::text::Text::*;
 use std::io::BufRead;
 use std::io::BufReader;
 use std::io::BufWriter;
 use std::io::Write;
-use std::net::SocketAddr;
 use std::net::TcpStream;
 
 /************************************************************************************************/
@@ -63,21 +60,17 @@ impl Session {
                     if command.len() > 0 {
                         match command[0].to_lowercase().as_str() {
                             "quit" | "exit" | "logout" => {
-                                write_response_and_log(
+                                CONNECTION_CLOSING.show_and_log(
                                     &mut writer,
                                     peer_addr,
-                                    205,
-                                    "Connection closing.", // FIXME use text module
-                                    &format!("received: {:?}", command), // FIXME use text module
+                                    &format!("received: {:?}", command),
                                 );
                                 break 'main_loop;
                             }
-                            &_ => write_response_and_error(
+                            &_ => UNKNOWN_COMMAND.show_and_log(
                                 &mut writer,
                                 peer_addr,
-                                500,
-                                "Unknown command.", // FIXME use text module
-                                &format!("received: {:?}", command), // FIXME use text module
+                                &format!("received: {:?}", command),
                             ),
                         }
                     }
@@ -88,47 +81,6 @@ impl Session {
     }
 
     /*------------------------------------------------------------------------------------------*/
-}
-
-/************************************************************************************************/
-
-fn write_response(writer: &mut BufWriter<&TcpStream>, response_code: u16, message: &str) {
-    writeln(writer, &format!("{} {}", response_code, message));
-}
-
-/************************************************************************************************/
-
-fn write_response_and_log(
-    writer: &mut BufWriter<&TcpStream>,
-    peer_addr: SocketAddr,
-    response_code: u16,
-    message: &str,
-    log_message: &str,
-) {
-    write_response(writer, response_code, message);
-
-    LogMessage::new(format!("{}; response: {}", log_message, message))
-        .set_response_code(response_code)
-        .set_client_addr(peer_addr)
-        .show();
-}
-
-/************************************************************************************************/
-
-fn write_response_and_error(
-    writer: &mut BufWriter<&TcpStream>,
-    peer_addr: SocketAddr,
-    response_code: u16,
-    message: &str,
-    log_message: &str,
-) {
-    write_response(writer, response_code, message);
-
-    LogMessage::new(format!("{}; response: {}", log_message, message))
-        .set_type(Error)
-        .set_response_code(response_code)
-        .set_client_addr(peer_addr)
-        .show();
 }
 
 /************************************************************************************************/
