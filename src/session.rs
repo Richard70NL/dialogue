@@ -3,7 +3,9 @@
 use crate::command::Command;
 use crate::command::Command::*;
 use crate::constants::response::*;
+use crate::error::DialogueError;
 use crate::text::s;
+use crate::text::so;
 use crate::text::Text::*;
 use std::io::BufRead;
 use std::io::BufReader;
@@ -36,7 +38,7 @@ impl<'a> Session<'a> {
 
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn run(&mut self) {
+    pub fn run(&mut self) -> Result<(), DialogueError> {
         let mut line = String::new();
         let peer_addr = self.stream.peer_addr().unwrap();
 
@@ -45,20 +47,20 @@ impl<'a> Session<'a> {
                 &mut self.writer,
                 peer_addr,
                 s(LogConnectionAccepted),
-            );
+            )?;
         } else {
             SERVICE_AVAILABLE_POSTING_PROHIBITED.show_and_log(
                 &mut self.writer,
                 peer_addr,
                 s(LogConnectionAccepted),
-            );
+            )?;
         }
 
         'main_loop: loop {
             line.clear();
             match self.reader.read_line(&mut line) {
                 Ok(_len) => {
-                    self.writeln(&format!("echo: {:?}", &line));
+                    self.writeln(&format!("echo: {:?}", &line))?;
 
                     let command = Command::parse(&line);
                     match &command {
@@ -67,14 +69,14 @@ impl<'a> Session<'a> {
                                 &mut self.writer,
                                 peer_addr,
                                 &command,
-                            );
+                            )?;
                             break 'main_loop;
                         }
                         Unknown(_) => UNKNOWN_COMMAND.show_and_log_command(
                             &mut self.writer,
                             peer_addr,
                             &command,
-                        ),
+                        )?,
                     }
 
                     self.writer.flush().unwrap(); // FIXME unwrap
@@ -82,18 +84,24 @@ impl<'a> Session<'a> {
                 Err(e) => eprintln!("{}", e), // FIXME write propper error response
             }
         }
+
+        Ok(())
     }
 
     /*------------------------------------------------------------------------------------------*/
 
-    fn write(&mut self, s: &str) {
-        self.writer.write(s.as_bytes()).unwrap(); // FIXME unwrap
+    fn write(&mut self, s: &str) -> Result<(), DialogueError> {
+        if let Err(e) = self.writer.write(s.as_bytes()) {
+            Err(DialogueError::new(format!("{:?}", e)).add(so(ErrorWhileWriting)))
+        } else {
+            Ok(())
+        }
     }
 
     /*------------------------------------------------------------------------------------------*/
 
-    fn writeln(&mut self, line: &str) {
-        self.write(&format!("{}\n", line));
+    fn writeln(&mut self, line: &str) -> Result<(), DialogueError> {
+        self.write(&format!("{}\n", line))
     }
 
     /*------------------------------------------------------------------------------------------*/

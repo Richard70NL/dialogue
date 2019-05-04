@@ -91,7 +91,9 @@ impl Server {
     fn handle_connection(&self, stream: TcpStream) {
         let _handler = spawn(move || {
             let mut session = Session::new(&stream);
-            session.run();
+            if let Err(e) = session.run() {
+                e.show();
+            }
         });
     }
 

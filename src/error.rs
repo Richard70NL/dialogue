@@ -32,7 +32,9 @@ impl DialogueError {
     /*------------------------------------------------------------------------------------------*/
 
     pub fn show(&self) {
-        eprintln!("{}", s(ErrorDialogueExit));
+        // FIXME: use error logging (LogMessage)
+
+        eprintln!("{}", s(ErrorDialogue));
         for msg in &self.messages {
             eprintln!("- {}", msg);
         }

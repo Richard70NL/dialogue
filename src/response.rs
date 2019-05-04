@@ -1,8 +1,11 @@
 /************************************************************************************************/
 
 use crate::command::Command;
+use crate::error::DialogueError;
 use crate::log::LogMessage;
 use crate::log::LogMessageType::*;
+use crate::text::so;
+use crate::text::Text::*;
 use std::io::BufWriter;
 use std::io::Write;
 use std::net::SocketAddr;
@@ -20,10 +23,12 @@ pub struct Response {
 impl Response {
     /*------------------------------------------------------------------------------------------*/
 
-    fn show(&self, writer: &mut BufWriter<&TcpStream>) {
-        writer
-            .write(format!("{} {}\n", self.code, self.message).as_bytes())
-            .unwrap(); // FIXME unwrap
+    fn show(&self, writer: &mut BufWriter<&TcpStream>) -> Result<(), DialogueError> {
+        if let Err(e) = writer.write(format!("{} {}\n", self.code, self.message).as_bytes()) {
+            Err(DialogueError::new(format!("{:?}", e)).add(so(ErrorWhileWriting)))
+        } else {
+            Ok(())
+        }
     }
 
     /*------------------------------------------------------------------------------------------*/
@@ -33,14 +38,14 @@ impl Response {
         writer: &mut BufWriter<&TcpStream>,
         peer_addr: SocketAddr,
         log_message: &str,
-    ) {
-        self.show(writer);
-
+    ) -> Result<(), DialogueError> {
         LogMessage::new(format!("{}; response: {}", log_message, self.message))
             .set_type(if self.code < 300 { Log } else { Error })
             .set_response_code(self.code)
             .set_client_addr(peer_addr)
             .show();
+
+        self.show(writer)
     }
 
     /*------------------------------------------------------------------------------------------*/
@@ -50,7 +55,7 @@ impl Response {
         writer: &mut BufWriter<&TcpStream>,
         peer_addr: SocketAddr,
         command: &Command,
-    ) {
+    ) -> Result<(), DialogueError> {
         self.show_and_log(writer, peer_addr, &format!("received: {:?}", command))
     }
 

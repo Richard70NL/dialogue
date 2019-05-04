@@ -10,10 +10,11 @@ pub enum Text {
     CliDatabaseUrlHelp,
     CliAddressHelp,
     /*------------------------------------------------------------------------------------------*/
-    ErrorDialogueExit,
+    ErrorDialogue,
     ErrorWriteLongHelp,
     ErrorInvalidCommand,
     ErrorBindingListener,
+    ErrorWhileWriting,
     /*------------------------------------------------------------------------------------------*/
     LogConnectionAccepted,
     LogRejectConnection,
@@ -37,10 +38,11 @@ pub fn s(text: Text) -> &'static str {
         Text::CliDatabaseUrlHelp => "Database connect string.",
         Text::CliAddressHelp => "Binding IP address.",
         /*--------------------------------------------------------------------------------------*/
-        Text::ErrorDialogueExit => "Dialogue exits with the following error(s):",
+        Text::ErrorDialogue => "There was an problem because of the following error(s):",
         Text::ErrorWriteLongHelp => "An error occured while writing the help information.",
         Text::ErrorInvalidCommand => "Invalid command.",
         Text::ErrorBindingListener => "Error while binding to address {1}.",
+        Text::ErrorWhileWriting => "There was an error while writing to the stream.",
         /*--------------------------------------------------------------------------------------*/
         Text::LogConnectionAccepted => "Connection accepted.",
         Text::LogRejectConnection => "rejected connection from {1}.",
