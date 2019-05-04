@@ -1,5 +1,7 @@
 /************************************************************************************************/
 
+use crate::command::Command;
+use crate::command::Command::*;
 use crate::constants::response::*;
 use crate::text::s;
 use crate::text::Text::*;
@@ -56,26 +58,25 @@ impl<'a> Session<'a> {
             line.clear();
             match self.reader.read_line(&mut line) {
                 Ok(_len) => {
-                    let command = parse_command_line(line.trim());
-                    self.writeln(&format!("echo: {:?}", command));
+                    self.writeln(&format!("echo: {:?}", &line));
 
-                    if command.len() > 0 {
-                        match command[0].to_lowercase().as_str() {
-                            "quit" | "exit" | "logout" => {
-                                CONNECTION_CLOSING.show_and_log_command(
-                                    &mut self.writer,
-                                    peer_addr,
-                                    &command,
-                                );
-                                break 'main_loop;
-                            }
-                            &_ => UNKNOWN_COMMAND.show_and_log_command(
+                    let command = Command::parse(&line);
+                    match &command {
+                        Quit => {
+                            CONNECTION_CLOSING.show_and_log_command(
                                 &mut self.writer,
                                 peer_addr,
                                 &command,
-                            ),
+                            );
+                            break 'main_loop;
                         }
+                        Unknown(_) => UNKNOWN_COMMAND.show_and_log_command(
+                            &mut self.writer,
+                            peer_addr,
+                            &command,
+                        ),
                     }
+
                     self.writer.flush().unwrap();
                 }
                 Err(e) => eprintln!("{}", e), // FIXME write propper error response
@@ -96,16 +97,6 @@ impl<'a> Session<'a> {
     }
 
     /*------------------------------------------------------------------------------------------*/
-}
-
-/************************************************************************************************/
-
-fn parse_command_line(command_line: &str) -> Vec<String> {
-    let command_line_string = String::from(command_line);
-    let iter = command_line_string.split_ascii_whitespace();
-    let command: Vec<String> = iter.map(|s| String::from(s)).collect();
-
-    command
 }
 
 /************************************************************************************************/

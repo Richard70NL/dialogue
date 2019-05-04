@@ -1,5 +1,6 @@
 /************************************************************************************************/
 
+use crate::command::Command;
 use crate::log::LogMessage;
 use crate::log::LogMessageType::*;
 use std::io::BufWriter;
@@ -48,7 +49,7 @@ impl Response {
         &self,
         writer: &mut BufWriter<&TcpStream>,
         peer_addr: SocketAddr,
-        command: &Vec<String>,
+        command: &Command,
     ) {
         self.show_and_log(writer, peer_addr, &format!("received: {:?}", command))
     }
