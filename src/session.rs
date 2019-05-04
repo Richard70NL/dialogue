@@ -77,7 +77,7 @@ impl<'a> Session<'a> {
                         ),
                     }
 
-                    self.writer.flush().unwrap();
+                    self.writer.flush().unwrap(); // FIXME unwrap
                 }
                 Err(e) => eprintln!("{}", e), // FIXME write propper error response
             }
