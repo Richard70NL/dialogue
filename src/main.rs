@@ -135,8 +135,11 @@ fn run() -> Result<(), DialogueError> {
 
 fn start_server(verbose: &Verbose, address: &str, dburl: &str) -> Result<(), DialogueError> {
     verbose.println(s(LogInitializeServer));
+
+    let address = SocketAddr::from_str(address).unwrap(); // FIXME unwrap
     let mut server = Server::new();
-    server.set_binding_address(SocketAddr::from_str(address).unwrap()); // FIXME unwrap
+
+    server.set_binding_address(address);
     server.set_database_url(String::from(dburl));
 
     verbose.println(s(LogStartServer));
