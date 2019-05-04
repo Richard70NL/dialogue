@@ -150,12 +150,14 @@ fn start_server(verbose: &Verbose, address: &str, dburl: &str) -> Result<(), Dia
 /************************************************************************************************/
 
 fn stop_server() {
+    // TODO: Implement stop server functionality.
     unimplemented!();
 }
 
 /************************************************************************************************/
 
 fn install_database_schema() {
+    // TODO: Implement install database schema functionality.
     unimplemented!();
 }
 
