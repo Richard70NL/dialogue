@@ -54,11 +54,11 @@ impl Server {
                 .add(sr(ErrorBindingListener, &[&self.address.to_string()])))
         })?;
 
-        LogMessage::new(format!(
-            "Listening on {}.",
-            listener.local_addr().unwrap().to_string()
+        LogMessage::new(sr(
+            LogListeningOn,
+            &[&listener.local_addr().unwrap().to_string()],
         ))
-        .show(); // FIXME use text module
+        .show();
 
         loop {
             match listener.accept() {
@@ -66,16 +66,14 @@ impl Server {
                     if self.accept_by_address(&addr) {
                         self.handle_connection(stream)
                     } else {
-                        LogMessage::new(format!("rejected connection from: {:?}", addr)) // FIXME use text module
+                        LogMessage::new(sr(LogRejectConnection, &[&addr.to_string()]))
                             .set_type(Error)
                             .show();
                     }
                 }
-                Err(e) => {
-                    LogMessage::new(format!("couldn't get client: {:?}", e)) // FIXME use text module
-                        .set_type(Error)
-                        .show()
-                }
+                Err(e) => LogMessage::new(sr(LogCouldntGetClient, &[&e.to_string()]))
+                    .set_type(Error)
+                    .show(),
             }
         }
     }

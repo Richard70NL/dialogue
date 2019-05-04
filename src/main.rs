@@ -134,15 +134,15 @@ fn run() -> Result<(), DialogueError> {
 /************************************************************************************************/
 
 fn start_server(verbose: &Verbose, address: &str, dburl: &str) -> Result<(), DialogueError> {
-    verbose.println("Initializing the server."); // FIXME use text module
+    verbose.println(s(LogInitializeServer));
     let mut server = Server::new();
     server.set_binding_address(SocketAddr::from_str(address).unwrap()); // FIXME unwrap
     server.set_database_url(String::from(dburl));
 
-    verbose.println("Start the server."); // FIXME use text module
+    verbose.println(s(LogStartServer));
     server.start()?;
 
-    verbose.println("Done!"); // FIXME use text module
+    verbose.println(s(LogDone));
 
     Ok(())
 }

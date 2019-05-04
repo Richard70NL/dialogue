@@ -16,6 +16,12 @@ pub enum Text {
     ErrorBindingListener,
     /*------------------------------------------------------------------------------------------*/
     LogConnectionAccepted,
+    LogRejectConnection,
+    LogCouldntGetClient,
+    LogInitializeServer,
+    LogStartServer,
+    LogDone,
+    LogListeningOn,
     /*------------------------------------------------------------------------------------------*/
 }
 
@@ -37,6 +43,12 @@ pub fn s(text: Text) -> &'static str {
         Text::ErrorBindingListener => "Error while binding to address {1}.",
         /*--------------------------------------------------------------------------------------*/
         Text::LogConnectionAccepted => "Connection accepted.",
+        Text::LogRejectConnection => "rejected connection from {1}.",
+        Text::LogCouldntGetClient => "Couldn't get client due to: {1}.",
+        Text::LogInitializeServer => "Initializing the server.",
+        Text::LogStartServer => "Start the server.",
+        Text::LogDone => "Done!",
+        Text::LogListeningOn => "Listening on {1}.",
         /*--------------------------------------------------------------------------------------*/
     }
 }
