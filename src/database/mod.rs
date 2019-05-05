@@ -37,6 +37,12 @@ impl Database {
 
     /*------------------------------------------------------------------------------------------*/
 
+    pub fn install_test_data(&self) -> Result<(), DialogueError> {
+        self.install_script(include_str!("test_data.sql"))
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
     fn install_script(&self, script: &str) -> Result<(), DialogueError> {
         match self.connection.batch_execute(script) {
             Ok(_) => Ok(()),

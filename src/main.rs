@@ -101,6 +101,12 @@ fn run() -> Result<(), DialogueError> {
                         .long(ARG_DATABASE_URL_LONG)
                         .help(s(CliDatabaseUrlHelp))
                         .default_value(DATA_BASE_URL),
+                )
+                .arg(
+                    Arg::with_name(ARG_TEST_DATA_NAME)
+                        .short(ARG_TEST_DATA_SHORT)
+                        .long(ARG_TEST_DATA_LONG)
+                        .help(s(CliTestDataHelp)),
                 ),
         );
 
@@ -134,7 +140,8 @@ fn run() -> Result<(), DialogueError> {
                 COMMAND_STOP_NAME => stop_server(),
                 COMMAND_INSTALL_NAME => {
                     let dburl = cmd.matches.value_of(ARG_DATABASE_URL_NAME).unwrap(); // FIXME unwrap
-                    install_database_schema(&verbose, dburl)?
+                    let test_data = cmd.matches.is_present(ARG_TEST_DATA_NAME);
+                    install_database_schema(&verbose, dburl, test_data)?
                 }
                 &_ => Err(DialogueError::new(so(ErrorInvalidCommand)))?,
             }
@@ -172,12 +179,21 @@ fn stop_server() {
 
 /************************************************************************************************/
 
-fn install_database_schema(verbose: &Verbose, dburl: &str) -> Result<(), DialogueError> {
+fn install_database_schema(
+    verbose: &Verbose,
+    dburl: &str,
+    test_data: bool,
+) -> Result<(), DialogueError> {
     verbose.println(s(LogConnectingToDb));
     let database = Database::open(dburl)?;
 
     verbose.println(s(LogInstallingDbSchema));
     database.install()?;
+
+    if test_data {
+        verbose.println(s(LogInstallingTestData));
+        database.install_test_data()?;
+    }
 
     verbose.println(s(LogDone));
 

@@ -7,6 +7,9 @@ pub mod cli {
     pub const ARG_DATABASE_URL_LONG: &str = "database-url";
     pub const ARG_DATABASE_URL_NAME: &str = "dburl";
     pub const ARG_DATABASE_URL_SHORT: &str = "d";
+    pub const ARG_TEST_DATA_LONG: &str = "test-data";
+    pub const ARG_TEST_DATA_NAME: &str = "testdata";
+    pub const ARG_TEST_DATA_SHORT: &str = "t";
     pub const ARG_VERBOSE_LONG: &str = "verbose";
     pub const ARG_VERBOSE_NAME: &str = "verbose";
     pub const ARG_VERBOSE_SHORT: &str = "v";

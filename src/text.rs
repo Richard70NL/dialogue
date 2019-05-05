@@ -15,6 +15,7 @@ pub enum Text {
     CliInstallAbout,
     CliDatabaseUrlHelp,
     CliAddressHelp,
+    CliTestDataHelp,
     /*------------------------------------------------------------------------------------------*/
     ErrorDialogue,
     ErrorWriteLongHelp,
@@ -33,6 +34,7 @@ pub enum Text {
     LogListeningOn,
     LogConnectingToDb,
     LogInstallingDbSchema,
+    LogInstallingTestData,
     /*------------------------------------------------------------------------------------------*/
 }
 
@@ -47,6 +49,7 @@ pub fn s(text: Text) -> &'static str {
         Text::CliInstallAbout => "Installs or upgrades the database schema.",
         Text::CliDatabaseUrlHelp => "Database connect string.",
         Text::CliAddressHelp => "Binding IP address.",
+        Text::CliTestDataHelp => "Install test data.",
         /*--------------------------------------------------------------------------------------*/
         Text::ErrorDialogue => "There was an problem because of the following error(s):",
         Text::ErrorWriteLongHelp => "An error occured while writing the help information.",
@@ -65,6 +68,7 @@ pub fn s(text: Text) -> &'static str {
         Text::LogListeningOn => "Listening on {1}.",
         Text::LogConnectingToDb => "Connecting to the database.",
         Text::LogInstallingDbSchema => "Installing or upgrading database schema.",
+        Text::LogInstallingTestData => "Installing test data.",
         /*--------------------------------------------------------------------------------------*/
     }
 }

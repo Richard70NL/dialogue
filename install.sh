@@ -1,2 +1,2 @@
 #!/bin/sh
-cargo run -- install --verbose
+cargo run -- install --verbose --test-data
