@@ -3,6 +3,7 @@
 #[derive(Debug)]
 pub enum Command {
     Quit,
+    Capabilities,
     Unknown(Vec<String>),
 }
 
@@ -19,6 +20,7 @@ impl Command {
         if command.len() > 0 {
             match command[0].to_lowercase().as_str() {
                 "quit" | "exit" | "logout" => Command::Quit,
+                "capabilities" => Command::Capabilities,
                 &_ => Command::Unknown(command),
             }
         } else {

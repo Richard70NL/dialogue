@@ -17,6 +17,13 @@ pub mod cli {
 
 /************************************************************************************************/
 
+pub mod env {
+    pub const CARGO_PKG_NAME: &str = env!("CARGO_PKG_NAME");
+    pub const CARGO_PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
+}
+
+/************************************************************************************************/
+
 pub mod default {
     pub const DATA_BASE_URL: &str = "postgresql://dialogue@localhost/dialog";
 }
@@ -41,6 +48,10 @@ pub mod response {
     pub const UNKNOWN_COMMAND: &Response = &Response {
         code: 500,
         message: "Unknown command.",
+    };
+    pub const CAPABILITIES_LIST_FOLLOWS: &Response = &Response {
+        code: 101,
+        message: "Capability list follows.",
     };
 }
 

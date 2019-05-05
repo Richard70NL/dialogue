@@ -2,6 +2,7 @@
 
 use crate::command::Command;
 use crate::command::Command::*;
+use crate::constants::env::*;
 use crate::constants::response::*;
 use crate::error::DialogueError;
 use crate::text::s;
@@ -60,8 +61,6 @@ impl<'a> Session<'a> {
             line.clear();
             match self.reader.read_line(&mut line) {
                 Ok(_len) => {
-                    self.writeln(&format!("echo: {:?}", &line))?;
-
                     let command = Command::parse(&line);
                     match &command {
                         Quit => {
@@ -71,6 +70,14 @@ impl<'a> Session<'a> {
                                 &command,
                             )?;
                             break 'main_loop;
+                        }
+                        Capabilities => {
+                            CAPABILITIES_LIST_FOLLOWS.show_and_log_command(
+                                &mut self.writer,
+                                peer_addr,
+                                &command,
+                            )?;
+                            self.handle_capabilities()?;
                         }
                         Unknown(_) => UNKNOWN_COMMAND.show_and_log_command(
                             &mut self.writer,
@@ -102,6 +109,27 @@ impl<'a> Session<'a> {
 
     fn writeln(&mut self, line: &str) -> Result<(), DialogueError> {
         self.write(&format!("{}\n", line))
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    fn handle_capabilities(&mut self) -> Result<(), DialogueError> {
+        self.writeln("VERSION 2")?;
+        self.writeln(&format!(
+            "IMPLEMENTATION {} {}",
+            CARGO_PKG_NAME, CARGO_PKG_VERSION
+        ))?;
+        self.writeln("READER")?;
+        // self.writeln("IHAVE")?;
+        // self.writeln("POST")?;
+        // self.writeln("NEWNEWS")?;
+        // self.writeln("HDR")?;
+        // self.writeln("OVER")?;
+        // self.writeln("LIST")?;
+        // self.writeln("MODE-READER")?;
+        self.writeln(".")?;
+
+        Ok(())
     }
 
     /*------------------------------------------------------------------------------------------*/
