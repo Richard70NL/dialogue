@@ -25,7 +25,7 @@ pub mod env {
 /************************************************************************************************/
 
 pub mod default {
-    pub const DATA_BASE_URL: &str = "postgresql://dialogue@localhost/dialog";
+    pub const DATA_BASE_URL: &str = "postgresql://dialogue@localhost/dialogue";
 }
 
 /************************************************************************************************/

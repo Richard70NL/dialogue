@@ -15,6 +15,8 @@ pub enum Text {
     ErrorInvalidCommand,
     ErrorBindingListener,
     ErrorWhileWriting,
+    ErrorConnectingDb,
+    ErrorInstallingSchema,
     /*------------------------------------------------------------------------------------------*/
     LogConnectionAccepted,
     LogRejectConnection,
@@ -23,6 +25,8 @@ pub enum Text {
     LogStartServer,
     LogDone,
     LogListeningOn,
+    LogConnectingToDb,
+    LogInstallingDbSchema,
     /*------------------------------------------------------------------------------------------*/
 }
 
@@ -43,6 +47,8 @@ pub fn s(text: Text) -> &'static str {
         Text::ErrorInvalidCommand => "Invalid command.",
         Text::ErrorBindingListener => "Error while binding to address {1}.",
         Text::ErrorWhileWriting => "There was an error while writing to the stream.",
+        Text::ErrorConnectingDb => "Error while connecting to the database.",
+        Text::ErrorInstallingSchema => "Error while installing or upgrading the database schema.",
         /*--------------------------------------------------------------------------------------*/
         Text::LogConnectionAccepted => "Connection accepted.",
         Text::LogRejectConnection => "rejected connection from {1}.",
@@ -51,6 +57,8 @@ pub fn s(text: Text) -> &'static str {
         Text::LogStartServer => "Start the server.",
         Text::LogDone => "Done!",
         Text::LogListeningOn => "Listening on {1}.",
+        Text::LogConnectingToDb => "Connecting to the database.",
+        Text::LogInstallingDbSchema => "Installing or upgrading database schema.",
         /*--------------------------------------------------------------------------------------*/
     }
 }

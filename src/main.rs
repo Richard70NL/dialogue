@@ -2,6 +2,7 @@
 
 mod command;
 mod constants;
+mod database;
 mod error;
 mod log;
 mod response;
@@ -19,6 +20,7 @@ extern crate clap;
 
 use crate::constants::cli::*;
 use crate::constants::default::*;
+use crate::database::Database;
 use crate::error::DialogueError;
 use crate::server::Server;
 use crate::text::s;
@@ -91,6 +93,13 @@ fn run() -> Result<(), DialogueError> {
                         .short(ARG_VERBOSE_SHORT)
                         .long(ARG_VERBOSE_LONG)
                         .help(s(CliVerboseHelp)),
+                )
+                .arg(
+                    Arg::with_name(ARG_DATABASE_URL_NAME)
+                        .short(ARG_DATABASE_URL_SHORT)
+                        .long(ARG_DATABASE_URL_LONG)
+                        .help(s(CliDatabaseUrlHelp))
+                        .default_value(DATA_BASE_URL),
                 ),
         );
 
@@ -122,7 +131,10 @@ fn run() -> Result<(), DialogueError> {
                     start_server(&verbose, address, dburl)?
                 }
                 COMMAND_STOP_NAME => stop_server(),
-                COMMAND_INSTALL_NAME => install_database_schema(),
+                COMMAND_INSTALL_NAME => {
+                    let dburl = cmd.matches.value_of(ARG_DATABASE_URL_NAME).unwrap(); // FIXME unwrap
+                    install_database_schema(&verbose, dburl)?
+                }
                 &_ => Err(DialogueError::new(so(ErrorInvalidCommand)))?,
             }
 
@@ -159,9 +171,16 @@ fn stop_server() {
 
 /************************************************************************************************/
 
-fn install_database_schema() {
-    // TODO: Implement install database schema functionality.
-    unimplemented!();
+fn install_database_schema(verbose: &Verbose, dburl: &str) -> Result<(), DialogueError> {
+    verbose.println(s(LogConnectingToDb));
+    let database = Database::open(dburl)?;
+
+    verbose.println(s(LogInstallingDbSchema));
+    database.install()?;
+
+    verbose.println(s(LogDone));
+
+    Ok(())
 }
 
 /************************************************************************************************/
