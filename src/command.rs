@@ -4,6 +4,7 @@
 pub enum Command {
     Quit,
     Capabilities,
+    Help,
     Unknown(Vec<String>),
 }
 
@@ -21,6 +22,7 @@ impl Command {
             match command[0].to_lowercase().as_str() {
                 "quit" | "exit" | "logout" => Command::Quit,
                 "capabilities" => Command::Capabilities,
+                "help" => Command::Help,
                 &_ => Command::Unknown(command),
             }
         } else {

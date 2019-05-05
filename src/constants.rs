@@ -53,6 +53,10 @@ pub mod response {
         code: 101,
         message: "Capability list follows.",
     };
+    pub const HELP_TEXT_FOLLOWS: &Response = &Response {
+        code: 100,
+        message: "Help text follows.",
+    };
 }
 
 /************************************************************************************************/

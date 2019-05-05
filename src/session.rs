@@ -58,6 +58,8 @@ impl<'a> Session<'a> {
         }
 
         'main_loop: loop {
+            // TODO: implement reader timeout!!!
+
             line.clear();
             match self.reader.read_line(&mut line) {
                 Ok(_len) => {
@@ -78,6 +80,14 @@ impl<'a> Session<'a> {
                                 &command,
                             )?;
                             self.handle_capabilities()?;
+                        }
+                        Help => {
+                            HELP_TEXT_FOLLOWS.show_and_log_command(
+                                &mut self.writer,
+                                peer_addr,
+                                &command,
+                            )?;
+                            self.handle_help()?;
                         }
                         Unknown(_) => UNKNOWN_COMMAND.show_and_log_command(
                             &mut self.writer,
@@ -127,6 +137,18 @@ impl<'a> Session<'a> {
         // self.writeln("OVER")?;
         // self.writeln("LIST")?;
         // self.writeln("MODE-READER")?;
+        self.writeln(".")?;
+
+        Ok(())
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    fn handle_help(&mut self) -> Result<(), DialogueError> {
+        self.writeln("Known commands:")?;
+        self.writeln("- quit")?;
+        self.writeln("- capabilities")?;
+        self.writeln("- help")?;
         self.writeln(".")?;
 
         Ok(())
