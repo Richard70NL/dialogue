@@ -9,6 +9,7 @@ mod response;
 mod server;
 mod session;
 mod text;
+mod util;
 mod verbose;
 
 /************************************************************************************************/

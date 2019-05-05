@@ -8,6 +8,7 @@ use crate::error::DialogueError;
 use crate::text::s;
 use crate::text::so;
 use crate::text::Text::*;
+use chrono::prelude::*;
 use std::io::BufRead;
 use std::io::BufReader;
 use std::io::BufWriter;
@@ -48,14 +49,18 @@ impl<'a> Session<'a> {
                 &mut self.writer,
                 peer_addr,
                 s(LogConnectionAccepted),
+                &[],
             )?;
         } else {
             SERVICE_AVAILABLE_POSTING_PROHIBITED.show_and_log(
                 &mut self.writer,
                 peer_addr,
                 s(LogConnectionAccepted),
+                &[],
             )?;
         }
+
+        self.writer.flush().unwrap(); // FIXME unwrap
 
         'main_loop: loop {
             // TODO: implement reader timeout!!!
@@ -70,6 +75,7 @@ impl<'a> Session<'a> {
                                 &mut self.writer,
                                 peer_addr,
                                 &command,
+                                &[],
                             )?;
                             break 'main_loop;
                         }
@@ -78,6 +84,7 @@ impl<'a> Session<'a> {
                                 &mut self.writer,
                                 peer_addr,
                                 &command,
+                                &[],
                             )?;
                             self.handle_capabilities()?;
                         }
@@ -86,13 +93,24 @@ impl<'a> Session<'a> {
                                 &mut self.writer,
                                 peer_addr,
                                 &command,
+                                &[],
                             )?;
                             self.handle_help()?;
+                        }
+                        Date => {
+                            let utc: DateTime<Utc> = Utc::now();
+                            SERVER_DATE_TIME.show_and_log_command(
+                                &mut self.writer,
+                                peer_addr,
+                                &command,
+                                &[&utc.format("%Y%m%d%H%M%S").to_string()],
+                            )?;
                         }
                         Unknown(_) => UNKNOWN_COMMAND.show_and_log_command(
                             &mut self.writer,
                             peer_addr,
                             &command,
+                            &[],
                         )?,
                     }
 
@@ -149,6 +167,7 @@ impl<'a> Session<'a> {
         self.writeln("- quit")?;
         self.writeln("- capabilities")?;
         self.writeln("- help")?;
+        self.writeln("- date")?;
         self.writeln(".")?;
 
         Ok(())

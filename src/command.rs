@@ -5,6 +5,7 @@ pub enum Command {
     Quit,
     Capabilities,
     Help,
+    Date,
     Unknown(Vec<String>),
 }
 
@@ -23,6 +24,7 @@ impl Command {
                 "quit" | "exit" | "logout" => Command::Quit,
                 "capabilities" => Command::Capabilities,
                 "help" => Command::Help,
+                "date" => Command::Date,
                 &_ => Command::Unknown(command),
             }
         } else {

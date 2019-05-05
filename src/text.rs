@@ -1,6 +1,12 @@
 /************************************************************************************************/
 // TODO: Reconsider this method of producing text. Maybe constants is better.
 
+/************************************************************************************************/
+
+use crate::util::str_format;
+
+/************************************************************************************************/
+
 pub enum Text {
     /*------------------------------------------------------------------------------------------*/
     CliVerboseHelp,
@@ -72,17 +78,7 @@ pub fn so(text: Text) -> String {
 /************************************************************************************************/
 
 pub fn sr(text: Text, values: &[&str]) -> String {
-    let mut msg = String::from(s(text));
-
-    for (i, v) in values.iter().enumerate() {
-        let mut place_holder = String::new();
-        place_holder.push('{');
-        place_holder.push_str(&(i + 1).to_string());
-        place_holder.push('}');
-        msg = msg.replace(&place_holder, v);
-    }
-
-    msg
+    str_format(s(text), values)
 }
 
 /************************************************************************************************/

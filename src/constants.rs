@@ -57,6 +57,10 @@ pub mod response {
         code: 100,
         message: "Help text follows.",
     };
+    pub const SERVER_DATE_TIME: &Response = &Response {
+        code: 111,
+        message: "{1}",
+    };
 }
 
 /************************************************************************************************/
