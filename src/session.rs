@@ -164,10 +164,10 @@ impl<'a> Session<'a> {
 
     fn handle_help(&mut self) -> Result<(), DialogueError> {
         self.writeln("Known commands:")?;
-        self.writeln("- quit")?;
-        self.writeln("- capabilities")?;
-        self.writeln("- help")?;
-        self.writeln("- date")?;
+        self.writeln("- QUIT")?;
+        self.writeln("- CAPABILITIES")?;
+        self.writeln("- HELP")?;
+        self.writeln("- DATE")?;
         self.writeln(".")?;
 
         Ok(())
