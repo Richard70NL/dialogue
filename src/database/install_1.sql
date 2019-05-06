@@ -16,6 +16,10 @@ create table t_group(
 create table t_article(
   f_message_id text not null,
   f_body text not null,
+  f_path text not null,
+  f_from text not null,
+  f_subject text not null,
+  f_date timestamp not null,
   constraint pk_article primary key(f_message_id)
 );
 
