@@ -53,7 +53,7 @@ pub mod response {
         message: "Unknown command.",
     };
     pub const INVALID_COMMAND: &Response = &Response {
-        code: 500,
+        code: 501,
         message: "Invalid command or syntax error.",
     };
     pub const CAPABILITIES_LIST_FOLLOWS: &Response = &Response {

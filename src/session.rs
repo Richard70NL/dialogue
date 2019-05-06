@@ -153,7 +153,9 @@ impl<'a> Session<'a> {
 
                     self.writer.flush().unwrap(); // FIXME unwrap
                 }
-                Err(e) => eprintln!("{}", e), // FIXME write propper error response
+                Err(e) => DialogueError::new(format!("{:?}", e))
+                    .add(so(ErrorReadingLine))
+                    .show(),
             }
         }
 
