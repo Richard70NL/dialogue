@@ -1,6 +1,7 @@
 /************************************************************************************************/
 
 use crate::error::DialogueError;
+use crate::group::Group;
 use crate::text::so;
 use crate::text::Text::*;
 use postgres::Connection;
@@ -78,6 +79,12 @@ impl Database {
                 0
             }
         }
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    pub fn get_group(&self, group_str: &str) -> Result<Group, DialogueError> {
+        Ok(Group::new(String::from(group_str), 0, 0, 0))
     }
 
     /*------------------------------------------------------------------------------------------*/

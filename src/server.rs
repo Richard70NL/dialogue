@@ -89,8 +89,10 @@ impl Server {
     /*------------------------------------------------------------------------------------------*/
 
     fn handle_connection(&self, stream: TcpStream) {
+        let dburl = self.database_url.clone();
+
         let _handler = spawn(move || {
-            let mut session = Session::new(&stream);
+            let mut session = Session::new(&stream, dburl);
             if let Err(e) = session.run() {
                 e.show();
             }

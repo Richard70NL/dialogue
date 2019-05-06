@@ -6,7 +6,9 @@ pub enum Command {
     Capabilities,
     Help,
     Date,
+    Group(String),
     Unknown(Vec<String>),
+    Invalid(Vec<String>),
 }
 
 /************************************************************************************************/
@@ -25,6 +27,13 @@ impl Command {
                 "capabilities" => Command::Capabilities,
                 "help" => Command::Help,
                 "date" => Command::Date,
+                "group" => {
+                    if command.len() > 1 {
+                        Command::Group(command[1].to_lowercase())
+                    } else {
+                        Command::Invalid(command)
+                    }
+                }
                 &_ => Command::Unknown(command),
             }
         } else {

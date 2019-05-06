@@ -4,7 +4,9 @@ use crate::command::Command;
 use crate::command::Command::*;
 use crate::constants::env::*;
 use crate::constants::response::*;
+use crate::database::Database;
 use crate::error::DialogueError;
+use crate::group::Group;
 use crate::text::s;
 use crate::text::so;
 use crate::text::Text::*;
@@ -22,6 +24,8 @@ pub struct Session<'a> {
     reader: BufReader<&'a TcpStream>,
     writer: BufWriter<&'a TcpStream>,
     posting_allowed: bool,
+    database: Database,
+    current_group: Option<Group>,
 }
 
 /************************************************************************************************/
@@ -29,12 +33,14 @@ pub struct Session<'a> {
 impl<'a> Session<'a> {
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn new(stream: &TcpStream) -> Session {
+    pub fn new(stream: &'a TcpStream, dburl: String) -> Session<'a> {
         Session {
             stream: stream,
             reader: BufReader::new(stream),
             writer: BufWriter::new(stream),
             posting_allowed: false,
+            database: Database::open(&dburl).unwrap(), // FIXME unwrap
+            current_group: None,
         }
     }
 
@@ -106,7 +112,38 @@ impl<'a> Session<'a> {
                                 &[&utc.format("%Y%m%d%H%M%S").to_string()],
                             )?;
                         }
+                        Group(group_str) => match self.database.get_group(group_str) {
+                            Ok(group) => {
+                                GROUP_SUCCESS.show_and_log_command(
+                                    &mut self.writer,
+                                    peer_addr,
+                                    &command,
+                                    &[
+                                        &group.get_article_count().to_string(),
+                                        &group.get_low_water_mark().to_string(),
+                                        &group.get_high_water_mark().to_string(),
+                                        &group.get_group_id(),
+                                    ],
+                                )?;
+                                self.current_group = Some(group);
+                            }
+                            Err(error) => {
+                                error.show();
+                                NO_SUCH_GROUP.show_and_log_command(
+                                    &mut self.writer,
+                                    peer_addr,
+                                    &command,
+                                    &[],
+                                )?;
+                            }
+                        },
                         Unknown(_) => UNKNOWN_COMMAND.show_and_log_command(
+                            &mut self.writer,
+                            peer_addr,
+                            &command,
+                            &[],
+                        )?,
+                        Invalid(_) => INVALID_COMMAND.show_and_log_command(
                             &mut self.writer,
                             peer_addr,
                             &command,
@@ -168,6 +205,7 @@ impl<'a> Session<'a> {
         self.writeln("- CAPABILITIES")?;
         self.writeln("- HELP")?;
         self.writeln("- DATE")?;
+        self.writeln("- GROUP")?;
         self.writeln(".")?;
 
         Ok(())

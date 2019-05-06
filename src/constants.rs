@@ -52,6 +52,10 @@ pub mod response {
         code: 500,
         message: "Unknown command.",
     };
+    pub const INVALID_COMMAND: &Response = &Response {
+        code: 500,
+        message: "Invalid command or syntax error.",
+    };
     pub const CAPABILITIES_LIST_FOLLOWS: &Response = &Response {
         code: 101,
         message: "Capability list follows.",
@@ -63,6 +67,14 @@ pub mod response {
     pub const SERVER_DATE_TIME: &Response = &Response {
         code: 111,
         message: "{1}",
+    };
+    pub const GROUP_SUCCESS: &Response = &Response {
+        code: 211,
+        message: "{1} {2} {3} {4}",
+    };
+    pub const NO_SUCH_GROUP: &Response = &Response {
+        code: 411,
+        message: "No such newsgroup.",
     };
 }
 
