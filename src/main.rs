@@ -4,6 +4,7 @@ mod command;
 mod constants;
 mod database;
 mod error;
+mod group;
 mod log;
 mod response;
 mod server;
@@ -11,7 +12,6 @@ mod session;
 mod text;
 mod util;
 mod verbose;
-mod group;
 
 /************************************************************************************************/
 
@@ -122,7 +122,7 @@ fn run() -> Result<(), DialogueError> {
                     Ok(())
                 }
                 Err(clap_err) => {
-                    Err(DialogueError::new(so(ErrorWriteLongHelp)).add(clap_err.message))
+                    Err(DialogueError::new(clap_err.message).add(so(ErrorWriteLongHelp)))
                 }
             }
         }
