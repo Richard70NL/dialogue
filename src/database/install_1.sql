@@ -8,6 +8,8 @@ create table t_group(
   f_group_id text not null,
   f_description text not null,
   f_sequence bigint not null default 0,
+  f_allowed bool not null default false,
+  f_moderated bool not null default false,
   constraint pk_group primary key(f_group_id)
 );
 

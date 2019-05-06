@@ -1,13 +1,13 @@
 -- *****************************************************************************
 
-insert into t_group(f_group_id, f_description)
-  values('local.test', 'Local testing group.');
-insert into t_group(f_group_id, f_description)
-  values('local.test2', 'Secondary local testing group.');
-insert into t_group(f_group_id, f_description)
-  values('local.dialogue.announce', 'Announcement group for the Dialogue NNTP server.');
-insert into t_group(f_group_id, f_description)
-  values('local.dialogue.general', 'General discussion group about the Dialogue NNTP server.');
+insert into t_group(f_group_id, f_description, f_allowed, f_moderated)
+  values('local.test', 'Local testing group.', true, false);
+insert into t_group(f_group_id, f_description, f_allowed, f_moderated)
+  values('local.test2', 'Secondary local testing group.', false, false);
+insert into t_group(f_group_id, f_description, f_allowed, f_moderated)
+  values('local.dialogue.announce', 'Announcement group for the Dialogue NNTP server.', true, true);
+insert into t_group(f_group_id, f_description, f_allowed, f_moderated)
+  values('local.dialogue.general', 'General discussion group about the Dialogue NNTP server.', true, false);
 
 -- *****************************************************************************
 
