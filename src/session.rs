@@ -71,7 +71,7 @@ impl<'a> Session<'a> {
         self.writer.flush().unwrap(); // FIXME unwrap
 
         'main_loop: loop {
-            // TODO: implement reader timeout!!!
+            // TODO: implement reader timeout!
 
             line.clear();
             match self.reader.read_line(&mut line) {
