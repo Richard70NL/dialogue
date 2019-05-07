@@ -44,7 +44,7 @@ impl Database {
 
     pub fn install(&self) -> Result<(), DialogueError> {
         match self.get_schema_version() {
-            0 => self.install_script(include_str!("install_1.sql")),
+            0 => self.install_script(include_str!("scripts/install_1.sql")),
             _ => Ok(()),
         }
     }
@@ -52,7 +52,7 @@ impl Database {
     /*------------------------------------------------------------------------------------------*/
 
     pub fn install_test_data(&self) -> Result<(), DialogueError> {
-        self.install_script(include_str!("test_data.sql"))
+        self.install_script(include_str!("scripts/test_data.sql"))
     }
 
     /*------------------------------------------------------------------------------------------*/
@@ -99,7 +99,7 @@ impl Database {
     pub fn get_group(&self, group_str: &str) -> Result<Group, DialogueError> {
         match self
             .connection
-            .query(include_str!("get_group.sql"), &[&group_str])
+            .query(include_str!("queries/get_group.sql"), &[&group_str])
         {
             Ok(rows) => {
                 if rows.is_empty() {
