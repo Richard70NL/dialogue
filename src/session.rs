@@ -184,7 +184,7 @@ impl<'a> Session<'a> {
         self.writeln("- CAPABILITIES")?;
         self.writeln("- HELP")?;
         self.writeln("- DATE")?;
-        self.writeln("- GROUP")?;
+        self.writeln("- GROUP group-id")?;
         self.writeln(".")?;
 
         Ok(())
