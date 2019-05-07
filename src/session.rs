@@ -89,49 +89,8 @@ impl<'a> Session<'a> {
                         }
                         Capabilities => self.handle_capabilities(peer_addr, &command)?,
                         Help => self.handle_help(peer_addr, &command)?,
-                        Date => {
-                            let utc: DateTime<Utc> = Utc::now();
-                            SERVER_DATE_TIME.show_and_log_command(
-                                &mut self.writer,
-                                peer_addr,
-                                &command,
-                                &[&utc.format("%Y%m%d%H%M%S").to_string()],
-                            )?;
-                        }
-                        Group(group_str) => match self.database.get_group(group_str) {
-                            Ok(group) => {
-                                GROUP_SUCCESS.show_and_log_command(
-                                    &mut self.writer,
-                                    peer_addr,
-                                    &command,
-                                    &[
-                                        &group.article_count.to_string(),
-                                        &group.low_water_mark.to_string(),
-                                        &group.high_water_mark.to_string(),
-                                        &group.group_id,
-                                    ],
-                                )?;
-                                self.current_group = Some(group);
-                            }
-                            Err(error) => match error.get_type() {
-                                NoSuchGroup => NO_SUCH_GROUP.show_and_log_command(
-                                    &mut self.writer,
-                                    peer_addr,
-                                    &command,
-                                    &[],
-                                )?,
-                                _ => {
-                                    INTERNAL_SERVER_ERROR.show_and_log_command(
-                                        &mut self.writer,
-                                        peer_addr,
-                                        &command,
-                                        &[],
-                                    )?;
-                                    error.show();
-                                    break 'main_loop;
-                                }
-                            },
-                        },
+                        Date => self.handle_date(peer_addr, &command)?,
+                        Group(group_str) => self.handle_group(peer_addr, &command, group_str)?,
                         Unknown(_) => UNKNOWN_COMMAND.show_and_log_command(
                             &mut self.writer,
                             peer_addr,
@@ -155,10 +114,7 @@ impl<'a> Session<'a> {
                         s(ErrorReadingLine),
                         &[],
                     )?;
-                    DialogueError::new(format!("{:?}", e))
-                        .add(so(ErrorReadingLine))
-                        .show();
-                    break 'main_loop;
+                    Err(DialogueError::new(format!("{:?}", e)).add(so(ErrorReadingLine)))?;
                 }
             }
         }
@@ -232,6 +188,72 @@ impl<'a> Session<'a> {
         self.writeln(".")?;
 
         Ok(())
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    fn handle_date(
+        &mut self,
+        peer_addr: SocketAddr,
+        command: &Command,
+    ) -> Result<(), DialogueError> {
+        let utc: DateTime<Utc> = Utc::now();
+
+        SERVER_DATE_TIME.show_and_log_command(
+            &mut self.writer,
+            peer_addr,
+            command,
+            &[&utc.format("%Y%m%d%H%M%S").to_string()],
+        )?;
+
+        Ok(())
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    fn handle_group(
+        &mut self,
+        peer_addr: SocketAddr,
+        command: &Command,
+        group_str: &str,
+    ) -> Result<(), DialogueError> {
+        match self.database.get_group(group_str) {
+            Ok(group) => {
+                GROUP_SUCCESS.show_and_log_command(
+                    &mut self.writer,
+                    peer_addr,
+                    &command,
+                    &[
+                        &group.article_count.to_string(),
+                        &group.low_water_mark.to_string(),
+                        &group.high_water_mark.to_string(),
+                        &group.group_id,
+                    ],
+                )?;
+                self.current_group = Some(group);
+                Ok(())
+            }
+            Err(error) => match error.get_type() {
+                NoSuchGroup => {
+                    NO_SUCH_GROUP.show_and_log_command(
+                        &mut self.writer,
+                        peer_addr,
+                        &command,
+                        &[],
+                    )?;
+                    Ok(())
+                }
+                _ => {
+                    INTERNAL_SERVER_ERROR.show_and_log_command(
+                        &mut self.writer,
+                        peer_addr,
+                        &command,
+                        &[],
+                    )?;
+                    Err(error)
+                }
+            },
+        }
     }
 
     /*------------------------------------------------------------------------------------------*/
