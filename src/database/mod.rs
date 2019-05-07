@@ -35,9 +35,7 @@ impl Database {
 
     pub fn open(dburl: &str) -> Result<Database, DialogueError> {
         match Connection::connect(dburl, TlsMode::None) {
-            Ok(connection) => Ok(Database {
-                connection: connection,
-            }),
+            Ok(connection) => Ok(Database { connection }),
             Err(e) => Err(DialogueError::new(e.to_string()).add(so(ErrorConnectingDb))),
         }
     }

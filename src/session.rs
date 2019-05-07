@@ -37,7 +37,7 @@ impl<'a> Session<'a> {
 
     pub fn new(stream: &'a TcpStream, dburl: String) -> Session<'a> {
         Session {
-            stream: stream,
+            stream,
             reader: BufReader::new(stream),
             writer: BufWriter::new(stream),
             posting_allowed: false,

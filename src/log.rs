@@ -27,7 +27,7 @@ impl LogMessage {
     pub fn new(message: String) -> LogMessage {
         LogMessage {
             message_type: LogMessageType::Log,
-            message: message,
+            message,
             response_code: None,
             client_addr: None,
         }

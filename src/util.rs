@@ -3,7 +3,7 @@
 pub fn string_format(text: String, values: &[&str]) -> String {
     let mut msg = text;
 
-    if values.len() > 0 {
+    if !values.is_empty() {
         for (i, v) in values.iter().enumerate() {
             let mut place_holder = String::new();
             place_holder.push('{');

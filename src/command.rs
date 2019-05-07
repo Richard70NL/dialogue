@@ -16,12 +16,12 @@ pub enum Command {
 impl Command {
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn parse(cmd: &String) -> Command {
+    pub fn parse(cmd: &str) -> Command {
         let command_line_string = String::from(cmd.trim());
         let iter = command_line_string.split_ascii_whitespace();
-        let command: Vec<String> = iter.map(|s| String::from(s)).collect();
+        let command: Vec<String> = iter.map(String::from).collect();
 
-        if command.len() > 0 {
+        if !command.is_empty() {
             match command[0].to_lowercase().as_str() {
                 "quit" | "exit" | "logout" => Command::Quit,
                 "capabilities" => Command::Capabilities,
