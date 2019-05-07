@@ -89,6 +89,8 @@ impl Server {
     /*------------------------------------------------------------------------------------------*/
 
     fn handle_connection(&self, stream: TcpStream) {
+        // TODO: implement max connections!
+
         let dburl = self.database_url.clone();
 
         let _handler = spawn(move || {
