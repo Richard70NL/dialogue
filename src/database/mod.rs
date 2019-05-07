@@ -1,5 +1,6 @@
 /************************************************************************************************/
 
+use crate::command::Range;
 use crate::error::DialogueError;
 use crate::error::DialogueErrorType::*;
 use crate::text::so;
@@ -120,6 +121,26 @@ impl Database {
                         high_water_mark: row.get("f_high_water_mark"),
                     })
                 }
+            }
+            Err(e) => Err(DialogueError::new(format!("{:?}", e)).add(so(ErrorSQL))),
+        }
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    pub fn list_article_numbers(
+        &self,
+        group_id: &str,
+        range: &Range,
+    ) -> Result<Vec<PgInteger>, DialogueError> {
+        match self.connection.query(
+            include_str!("queries/list_article_numbers.sql"),
+            &[&group_id, &range.from, &range.to],
+        ) {
+            Ok(rows) => {
+                let article_numbers: Vec<PgInteger> =
+                    rows.iter().map(|row| row.get("f_number")).collect();
+                Ok(article_numbers)
             }
             Err(e) => Err(DialogueError::new(format!("{:?}", e)).add(so(ErrorSQL))),
         }

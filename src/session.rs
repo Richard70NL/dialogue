@@ -2,10 +2,13 @@
 
 use crate::command::Command;
 use crate::command::Command::*;
+use crate::command::Range;
+use crate::command::FT_MAX;
 use crate::constants::env::*;
 use crate::constants::response::*;
 use crate::database::ArticlePointer;
 use crate::database::Database;
+use crate::database::Group;
 use crate::error::DialogueError;
 use crate::error::DialogueErrorType::*;
 use crate::text::s;
@@ -90,7 +93,10 @@ impl<'a> Session<'a> {
                         Capabilities => self.handle_capabilities(peer_addr, &command)?,
                         Help => self.handle_help(peer_addr, &command)?,
                         Date => self.handle_date(peer_addr, &command)?,
-                        Group(group_str) => self.handle_group(peer_addr, &command, group_str)?,
+                        Group(group_id) => self.handle_group(peer_addr, &command, group_id)?,
+                        ListGroup(group_id, range) => {
+                            self.handle_list_group(peer_addr, &command, group_id, range)?
+                        }
                         Unknown(_) => UNKNOWN_COMMAND.show_and_log_command(
                             &mut self.writer,
                             peer_addr,
@@ -185,6 +191,7 @@ impl<'a> Session<'a> {
         self.writeln("- HELP")?;
         self.writeln("- DATE")?;
         self.writeln("- GROUP group-id")?;
+        self.writeln("- LISTGROUP [group [range]]")?;
         self.writeln(".")?;
 
         Ok(())
@@ -211,13 +218,56 @@ impl<'a> Session<'a> {
 
     /*------------------------------------------------------------------------------------------*/
 
+    fn select_group(
+        &mut self,
+        peer_addr: SocketAddr,
+        command: &Command,
+        group_id: &str,
+    ) -> Result<Group, DialogueError> {
+        match self.database.get_group(group_id) {
+            Ok(group) => {
+                self.current_article = Some(ArticlePointer {
+                    group_id: group.group_id.clone(),
+                    article_nr: group.low_water_mark,
+                });
+                Ok(group)
+            }
+            Err(error) => match error.get_type() {
+                NoSuchGroup => {
+                    NO_SUCH_GROUP.show_and_log_command(
+                        &mut self.writer,
+                        peer_addr,
+                        &command,
+                        &[],
+                    )?;
+                    Err(error)
+                }
+                _ => {
+                    INTERNAL_SERVER_ERROR.show_and_log_command(
+                        &mut self.writer,
+                        peer_addr,
+                        &command,
+                        &[],
+                    )?;
+                    Err(error)
+                }
+            },
+        }
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
     fn handle_group(
         &mut self,
         peer_addr: SocketAddr,
         command: &Command,
-        group_str: &str,
+        group_id: &str,
     ) -> Result<(), DialogueError> {
-        match self.database.get_group(group_str) {
+        match self.select_group(peer_addr, command, group_id) {
+            Err(error) => match error.get_type() {
+                NoSuchGroup => Ok(()), // NO SUCH GROUP message is already send with select_group
+                _ => Err(error),       // INTERNAL SERVER ERROR is already send with select_group
+            },
             Ok(group) => {
                 GROUP_SUCCESS.show_and_log_command(
                     &mut self.writer,
@@ -230,32 +280,71 @@ impl<'a> Session<'a> {
                         &group.group_id,
                     ],
                 )?;
-                self.current_article = Some(ArticlePointer {
-                    group_id: group.group_id,
-                    article_nr: group.low_water_mark,
-                });
                 Ok(())
             }
-            Err(error) => match error.get_type() {
-                NoSuchGroup => {
-                    NO_SUCH_GROUP.show_and_log_command(
-                        &mut self.writer,
-                        peer_addr,
-                        &command,
-                        &[],
-                    )?;
-                    Ok(())
-                }
-                _ => {
-                    INTERNAL_SERVER_ERROR.show_and_log_command(
-                        &mut self.writer,
-                        peer_addr,
-                        &command,
-                        &[],
-                    )?;
-                    Err(error)
-                }
+        }
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    fn handle_list_group(
+        &mut self,
+        peer_addr: SocketAddr,
+        command: &Command,
+        group_id: &Option<String>,
+        range: &Option<Range>,
+    ) -> Result<(), DialogueError> {
+        let group_id: String = match group_id {
+            Some(gid) => gid.to_string(),
+            None => match &self.current_article {
+                Some(ap) => ap.group_id.clone(),
+                None => String::new(),
             },
+        };
+
+        if group_id.is_empty() {
+            NO_GROUP_SELECTED.show_and_log_command(&mut self.writer, peer_addr, &command, &[])?;
+            Ok(())
+        } else {
+            match self.select_group(peer_addr, command, &group_id) {
+                Err(error) => match error.get_type() {
+                    NoSuchGroup => Ok(()), // NO SUCH GROUP message is already send with select_group
+                    _ => Err(error), // INTERNAL SERVER ERROR is already send with select_group
+                },
+                Ok(group) => {
+                    LIST_GROUP_SUCCESS.show_and_log_command(
+                        &mut self.writer,
+                        peer_addr,
+                        &command,
+                        &[
+                            &group.article_count.to_string(),
+                            &group.low_water_mark.to_string(),
+                            &group.high_water_mark.to_string(),
+                            &group.group_id,
+                        ],
+                    )?;
+
+                    let range: &Range = match range {
+                        Some(r) => r,
+                        None => &Range {
+                            from: 0,
+                            to: FT_MAX,
+                        },
+                    };
+
+                    match self.database.list_article_numbers(&group.group_id, &range) {
+                        Err(error) => Err(error),
+                        Ok(article_numbers) => {
+                            for nr in article_numbers {
+                                self.writeln(&nr.to_string())?;
+                            }
+                            self.writeln(".")?;
+
+                            Ok(())
+                        }
+                    }
+                }
+            }
         }
     }
 

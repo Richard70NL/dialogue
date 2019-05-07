@@ -1,5 +1,14 @@
 /************************************************************************************************/
 
+use crate::error::DialogueError;
+
+/************************************************************************************************/
+
+type FT = i32;
+pub const FT_MAX: FT = std::i32::MAX;
+
+/************************************************************************************************/
+
 #[derive(Debug)]
 pub enum Command {
     Quit,
@@ -7,8 +16,17 @@ pub enum Command {
     Help,
     Date,
     Group(String),
+    ListGroup(Option<String>, Option<Range>),
     Unknown(Vec<String>),
     Invalid(Vec<String>),
+}
+
+/************************************************************************************************/
+
+#[derive(Debug)]
+pub struct Range {
+    pub from: FT,
+    pub to: FT,
 }
 
 /************************************************************************************************/
@@ -34,6 +52,22 @@ impl Command {
                         Command::Invalid(command)
                     }
                 }
+                "listgroup" => {
+                    if command.len() > 1 {
+                        let group_id = command[1].to_lowercase();
+
+                        if command.len() > 2 {
+                            match parse_range(&command[2]) {
+                                Ok(range) => Command::ListGroup(Some(group_id), Some(range)),
+                                Err(_) => Command::Invalid(command),
+                            }
+                        } else {
+                            Command::ListGroup(Some(group_id), None)
+                        }
+                    } else {
+                        Command::ListGroup(None, None)
+                    }
+                }
                 &_ => Command::Unknown(command),
             }
         } else {
@@ -42,6 +76,35 @@ impl Command {
     }
 
     /*------------------------------------------------------------------------------------------*/
+}
+
+fn parse_range(range_str: &str) -> Result<Range, DialogueError> {
+    let v: Vec<&str> = range_str.split('-').collect();
+
+    if v.is_empty() {
+        Ok(Range { from: 0, to: 0 })
+    } else if v.len() == 1 {
+        let nr = parse_integer(v[0], 0)?;
+        Ok(Range { from: nr, to: nr })
+    } else {
+        Ok(Range {
+            from: parse_integer(v[0], 0)?,
+            to: parse_integer(v[1], FT_MAX)?,
+        })
+    }
+}
+
+/************************************************************************************************/
+
+fn parse_integer(s: &str, default: FT) -> Result<FT, DialogueError> {
+    if s.is_empty() {
+        Ok(default)
+    } else {
+        match s.parse::<FT>() {
+            Ok(i) => Ok(i),
+            Err(e) => Err(DialogueError::new(format! {"{:?}", e})),
+        }
+    }
 }
 
 /************************************************************************************************/

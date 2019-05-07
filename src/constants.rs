@@ -80,6 +80,14 @@ pub mod response {
         code: 400,
         message: "Internal server error.",
     };
+    pub const NO_GROUP_SELECTED: &Response = &Response {
+        code: 412,
+        message: "No group selected.",
+    };
+    pub const LIST_GROUP_SUCCESS: &Response = &Response {
+        code: 211,
+        message: "{1} {2} {3} {4} Article numbers follow.",
+    };
 }
 
 /************************************************************************************************/
