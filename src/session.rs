@@ -88,15 +88,7 @@ impl<'a> Session<'a> {
                             break 'main_loop;
                         }
                         Capabilities => self.handle_capabilities(peer_addr, &command)?,
-                        Help => {
-                            HELP_TEXT_FOLLOWS.show_and_log_command(
-                                &mut self.writer,
-                                peer_addr,
-                                &command,
-                                &[],
-                            )?;
-                            self.handle_help()?;
-                        }
+                        Help => self.handle_help(peer_addr, &command)?,
                         Date => {
                             let utc: DateTime<Utc> = Utc::now();
                             SERVER_DATE_TIME.show_and_log_command(
@@ -224,7 +216,13 @@ impl<'a> Session<'a> {
 
     /*------------------------------------------------------------------------------------------*/
 
-    fn handle_help(&mut self) -> Result<(), DialogueError> {
+    fn handle_help(
+        &mut self,
+        peer_addr: SocketAddr,
+        command: &Command,
+    ) -> Result<(), DialogueError> {
+        HELP_TEXT_FOLLOWS.show_and_log_command(&mut self.writer, peer_addr, command, &[])?;
+
         self.writeln("Known commands:")?;
         self.writeln("- QUIT")?;
         self.writeln("- CAPABILITIES")?;
