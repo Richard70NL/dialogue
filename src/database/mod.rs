@@ -10,7 +10,6 @@ use postgres::TlsMode;
 /************************************************************************************************/
 
 type PgText = String;
-type PgBigInt = i64;
 type PgInteger = i32;
 
 /************************************************************************************************/
@@ -23,9 +22,9 @@ pub struct Database {
 
 pub struct Group {
     pub group_id: PgText,
-    pub article_count: PgBigInt,
-    pub low_water_mark: PgBigInt,
-    pub high_water_mark: PgBigInt,
+    pub article_count: PgInteger,
+    pub low_water_mark: PgInteger,
+    pub high_water_mark: PgInteger,
 }
 
 /************************************************************************************************/

@@ -7,7 +7,7 @@ create schema dialogue;
 create table t_group(
   f_group_id text not null,
   f_description text not null,
-  f_sequence bigint not null default 0,
+  f_sequence integer not null default 0,
   f_allowed bool not null default false,
   f_moderated bool not null default false,
   constraint pk_group primary key(f_group_id)
@@ -40,7 +40,7 @@ create table t_header(
 create table t_group_article(
   f_group_id text not null,
   f_message_id text not null,
-  f_number bigint not null,
+  f_number integer not null,
   constraint pk_group_article primary key(f_group_id, f_message_id),
   constraint uk_group_article_1 unique(f_group_id, f_number),
   constraint fk_group_article_1 foreign key(f_group_id) references t_group(f_group_id),
