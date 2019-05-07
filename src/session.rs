@@ -16,6 +16,7 @@ use std::io::BufRead;
 use std::io::BufReader;
 use std::io::BufWriter;
 use std::io::Write;
+use std::net::SocketAddr;
 use std::net::TcpStream;
 
 /************************************************************************************************/
@@ -49,7 +50,7 @@ impl<'a> Session<'a> {
 
     pub fn run(&mut self) -> Result<(), DialogueError> {
         let mut line = String::new();
-        let peer_addr = self.stream.peer_addr().unwrap();
+        let peer_addr = self.stream.peer_addr().unwrap(); // FIXME: unwrap
 
         if self.posting_allowed {
             SERVICE_AVAILABLE_POSTING_ALLOWED.show_and_log(
@@ -86,15 +87,7 @@ impl<'a> Session<'a> {
                             )?;
                             break 'main_loop;
                         }
-                        Capabilities => {
-                            CAPABILITIES_LIST_FOLLOWS.show_and_log_command(
-                                &mut self.writer,
-                                peer_addr,
-                                &command,
-                                &[],
-                            )?;
-                            self.handle_capabilities()?;
-                        }
+                        Capabilities => self.handle_capabilities(peer_addr, &command)?,
                         Help => {
                             HELP_TEXT_FOLLOWS.show_and_log_command(
                                 &mut self.writer,
@@ -199,7 +192,18 @@ impl<'a> Session<'a> {
 
     /*------------------------------------------------------------------------------------------*/
 
-    fn handle_capabilities(&mut self) -> Result<(), DialogueError> {
+    fn handle_capabilities(
+        &mut self,
+        peer_addr: SocketAddr,
+        command: &Command,
+    ) -> Result<(), DialogueError> {
+        CAPABILITIES_LIST_FOLLOWS.show_and_log_command(
+            &mut self.writer,
+            peer_addr,
+            command,
+            &[],
+        )?;
+
         self.writeln("VERSION 2")?;
         self.writeln(&format!(
             "IMPLEMENTATION {} {}",
