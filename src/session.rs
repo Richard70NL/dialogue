@@ -4,8 +4,8 @@ use crate::command::Command;
 use crate::command::Command::*;
 use crate::constants::env::*;
 use crate::constants::response::*;
+use crate::database::ArticlePointer;
 use crate::database::Database;
-use crate::database::Group;
 use crate::error::DialogueError;
 use crate::error::DialogueErrorType::*;
 use crate::text::s;
@@ -27,7 +27,7 @@ pub struct Session<'a> {
     writer: BufWriter<&'a TcpStream>,
     posting_allowed: bool,
     database: Database,
-    current_group: Option<Group>,
+    current_article: Option<ArticlePointer>,
 }
 
 /************************************************************************************************/
@@ -42,7 +42,7 @@ impl<'a> Session<'a> {
             writer: BufWriter::new(stream),
             posting_allowed: false,
             database: Database::open(&dburl).unwrap(), // FIXME unwrap
-            current_group: None,
+            current_article: None,
         }
     }
 
@@ -230,7 +230,10 @@ impl<'a> Session<'a> {
                         &group.group_id,
                     ],
                 )?;
-                self.current_group = Some(group);
+                self.current_article = Some(ArticlePointer {
+                    group_id: group.group_id,
+                    article_nr: group.low_water_mark,
+                });
                 Ok(())
             }
             Err(error) => match error.get_type() {

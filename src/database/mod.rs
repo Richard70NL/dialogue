@@ -20,6 +20,13 @@ pub struct Database {
 
 /************************************************************************************************/
 
+pub struct ArticlePointer {
+    pub group_id: PgText,
+    pub article_nr: PgInteger,
+}
+
+/************************************************************************************************/
+
 pub struct Group {
     pub group_id: PgText,
     pub article_count: PgInteger,
