@@ -5,8 +5,8 @@ use crate::command::Command::*;
 use crate::constants::env::*;
 use crate::constants::response::*;
 use crate::database::Database;
+use crate::database::Group;
 use crate::error::DialogueError;
-use crate::group::Group;
 use crate::text::s;
 use crate::text::so;
 use crate::text::Text::*;
@@ -119,10 +119,10 @@ impl<'a> Session<'a> {
                                     peer_addr,
                                     &command,
                                     &[
-                                        &group.get_article_count().to_string(),
-                                        &group.get_low_water_mark().to_string(),
-                                        &group.get_high_water_mark().to_string(),
-                                        &group.get_group_id(),
+                                        &group.article_count.to_string(),
+                                        &group.low_water_mark.to_string(),
+                                        &group.high_water_mark.to_string(),
+                                        &group.group_id,
                                     ],
                                 )?;
                                 self.current_group = Some(group);

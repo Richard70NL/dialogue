@@ -1,7 +1,6 @@
 /************************************************************************************************/
 
 use crate::error::DialogueError;
-use crate::group::Group;
 use crate::text::so;
 use crate::text::Text::*;
 use postgres::Connection;
@@ -9,8 +8,23 @@ use postgres::TlsMode;
 
 /************************************************************************************************/
 
+type PgText = String;
+type PgBigInt = i64;
+type PgInteger = i32;
+
+/************************************************************************************************/
+
 pub struct Database {
     connection: Connection,
+}
+
+/************************************************************************************************/
+
+pub struct Group {
+    pub group_id: PgText,
+    pub article_count: PgBigInt,
+    pub low_water_mark: PgBigInt,
+    pub high_water_mark: PgBigInt,
 }
 
 /************************************************************************************************/
@@ -53,10 +67,10 @@ impl Database {
 
     /*------------------------------------------------------------------------------------------*/
 
-    fn get_schema_version(&self) -> i32 {
+    fn get_schema_version(&self) -> PgInteger {
         match self
             .connection
-            .query("select dialogue.schema_version();", &[])
+            .query("select dialogue.schema_version()::integer;", &[])
         {
             Ok(rows) => {
                 if rows.is_empty() {
@@ -84,7 +98,26 @@ impl Database {
     /*------------------------------------------------------------------------------------------*/
 
     pub fn get_group(&self, group_str: &str) -> Result<Group, DialogueError> {
-        Ok(Group::new(String::from(group_str), 0, 0, 0))
+        match self
+            .connection
+            .query(include_str!("get_group.sql"), &[&group_str])
+        {
+            Ok(rows) => {
+                if rows.is_empty() {
+                    Err(DialogueError::new(so(ErrorNoSuchGroup)))
+                } else {
+                    let row = rows.get(0);
+
+                    Ok(Group {
+                        group_id: row.get("f_group_id"),
+                        article_count: row.get("f_article_count"),
+                        low_water_mark: row.get("f_low_water_mark"),
+                        high_water_mark: row.get("f_high_water_mark"),
+                    })
+                }
+            }
+            Err(e) => Err(DialogueError::new(format!("{:?}", e)).add(so(ErrorSQL))),
+        }
     }
 
     /*------------------------------------------------------------------------------------------*/

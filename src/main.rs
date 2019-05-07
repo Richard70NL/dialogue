@@ -4,7 +4,6 @@ mod command;
 mod constants;
 mod database;
 mod error;
-mod group;
 mod log;
 mod response;
 mod server;

@@ -25,6 +25,8 @@ pub enum Text {
     ErrorConnectingDb,
     ErrorInstallingSchema,
     ErrorReadingLine,
+    ErrorSQL,
+    ErrorNoSuchGroup,
     /*------------------------------------------------------------------------------------------*/
     LogConnectionAccepted,
     LogRejectConnection,
@@ -60,6 +62,8 @@ pub fn s(text: Text) -> &'static str {
         Text::ErrorConnectingDb => "Error while connecting to the database.",
         Text::ErrorInstallingSchema => "Error while installing or upgrading the database schema.",
         Text::ErrorReadingLine => "Error while reading a line from the stream.",
+        Text::ErrorSQL => "SQL Error",
+        Text::ErrorNoSuchGroup => "No such group.",
         /*--------------------------------------------------------------------------------------*/
         Text::LogConnectionAccepted => "Connection accepted.",
         Text::LogRejectConnection => "rejected connection from {1}.",
