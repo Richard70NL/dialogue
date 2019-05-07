@@ -76,6 +76,10 @@ pub mod response {
         code: 411,
         message: "No such newsgroup.",
     };
+    pub const INTERNAL_SERVER_ERROR: &Response = &Response {
+        code: 400,
+        message: "Internal server error.",
+    };
 }
 
 /************************************************************************************************/

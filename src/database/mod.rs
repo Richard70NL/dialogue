@@ -1,6 +1,7 @@
 /************************************************************************************************/
 
 use crate::error::DialogueError;
+use crate::error::DialogueErrorType::*;
 use crate::text::so;
 use crate::text::Text::*;
 use postgres::Connection;
@@ -104,7 +105,7 @@ impl Database {
         {
             Ok(rows) => {
                 if rows.is_empty() {
-                    Err(DialogueError::new(so(ErrorNoSuchGroup)))
+                    Err(DialogueError::new(so(ErrorNoSuchGroup)).set_type(NoSuchGroup))
                 } else {
                     let row = rows.get(0);
 

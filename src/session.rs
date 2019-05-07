@@ -7,6 +7,7 @@ use crate::constants::response::*;
 use crate::database::Database;
 use crate::database::Group;
 use crate::error::DialogueError;
+use crate::error::DialogueErrorType::*;
 use crate::text::s;
 use crate::text::so;
 use crate::text::Text::*;
@@ -127,15 +128,24 @@ impl<'a> Session<'a> {
                                 )?;
                                 self.current_group = Some(group);
                             }
-                            Err(error) => {
-                                error.show();
-                                NO_SUCH_GROUP.show_and_log_command(
+                            Err(error) => match error.get_type() {
+                                NoSuchGroup => NO_SUCH_GROUP.show_and_log_command(
                                     &mut self.writer,
                                     peer_addr,
                                     &command,
                                     &[],
-                                )?;
-                            }
+                                )?,
+                                _ => {
+                                    INTERNAL_SERVER_ERROR.show_and_log_command(
+                                        &mut self.writer,
+                                        peer_addr,
+                                        &command,
+                                        &[],
+                                    )?;
+                                    error.show();
+                                    break 'main_loop;
+                                }
+                            },
                         },
                         Unknown(_) => UNKNOWN_COMMAND.show_and_log_command(
                             &mut self.writer,
@@ -153,9 +163,18 @@ impl<'a> Session<'a> {
 
                     self.writer.flush().unwrap(); // FIXME unwrap
                 }
-                Err(e) => DialogueError::new(format!("{:?}", e))
-                    .add(so(ErrorReadingLine))
-                    .show(),
+                Err(e) => {
+                    INTERNAL_SERVER_ERROR.show_and_log(
+                        &mut self.writer,
+                        peer_addr,
+                        s(ErrorReadingLine),
+                        &[],
+                    )?;
+                    DialogueError::new(format!("{:?}", e))
+                        .add(so(ErrorReadingLine))
+                        .show();
+                    break 'main_loop;
+                }
             }
         }
 
