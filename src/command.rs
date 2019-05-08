@@ -1,11 +1,7 @@
 /************************************************************************************************/
 
 use crate::error::DialogueError;
-
-/************************************************************************************************/
-
-type FT = i32;
-pub const FT_MAX: FT = std::i32::MAX;
+use crate::types::*;
 
 /************************************************************************************************/
 
@@ -25,8 +21,8 @@ pub enum Command {
 
 #[derive(Debug)]
 pub struct Range {
-    pub from: FT,
-    pub to: FT,
+    pub from: DbInteger,
+    pub to: DbInteger,
 }
 
 /************************************************************************************************/
@@ -89,18 +85,18 @@ fn parse_range(range_str: &str) -> Result<Range, DialogueError> {
     } else {
         Ok(Range {
             from: parse_integer(v[0], 0)?,
-            to: parse_integer(v[1], FT_MAX)?,
+            to: parse_integer(v[1], MAX_DB_INTEGER)?,
         })
     }
 }
 
 /************************************************************************************************/
 
-fn parse_integer(s: &str, default: FT) -> Result<FT, DialogueError> {
+fn parse_integer(s: &str, default: DbInteger) -> Result<DbInteger, DialogueError> {
     if s.is_empty() {
         Ok(default)
     } else {
-        match s.parse::<FT>() {
+        match s.parse::<DbInteger>() {
             Ok(i) => Ok(i),
             Err(e) => Err(DialogueError::new(format! {"{:?}", e})),
         }

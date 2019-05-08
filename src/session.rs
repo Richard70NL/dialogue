@@ -3,7 +3,6 @@
 use crate::command::Command;
 use crate::command::Command::*;
 use crate::command::Range;
-use crate::command::FT_MAX;
 use crate::constants::env::*;
 use crate::constants::response::*;
 use crate::database::ArticlePointer;
@@ -14,6 +13,7 @@ use crate::error::DialogueErrorType::*;
 use crate::text::s;
 use crate::text::so;
 use crate::text::Text::*;
+use crate::types::*;
 use chrono::prelude::*;
 use std::io::BufRead;
 use std::io::BufReader;
@@ -328,7 +328,7 @@ impl<'a> Session<'a> {
                         Some(r) => r,
                         None => &Range {
                             from: 0,
-                            to: FT_MAX,
+                            to: MAX_DB_INTEGER,
                         },
                     };
 

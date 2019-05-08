@@ -5,13 +5,9 @@ use crate::error::DialogueError;
 use crate::error::DialogueErrorType::*;
 use crate::text::so;
 use crate::text::Text::*;
+use crate::types::*;
 use postgres::Connection;
 use postgres::TlsMode;
-
-/************************************************************************************************/
-
-type PgText = String;
-type PgInteger = i32;
 
 /************************************************************************************************/
 
@@ -22,17 +18,17 @@ pub struct Database {
 /************************************************************************************************/
 
 pub struct ArticlePointer {
-    pub group_id: PgText,
-    pub article_nr: PgInteger,
+    pub group_id: DbText,
+    pub article_nr: DbInteger,
 }
 
 /************************************************************************************************/
 
 pub struct Group {
-    pub group_id: PgText,
-    pub article_count: PgInteger,
-    pub low_water_mark: PgInteger,
-    pub high_water_mark: PgInteger,
+    pub group_id: DbText,
+    pub article_count: DbInteger,
+    pub low_water_mark: DbInteger,
+    pub high_water_mark: DbInteger,
 }
 
 /************************************************************************************************/
@@ -73,7 +69,7 @@ impl Database {
 
     /*------------------------------------------------------------------------------------------*/
 
-    fn get_schema_version(&self) -> PgInteger {
+    fn get_schema_version(&self) -> DbInteger {
         match self
             .connection
             .query("select dialogue.schema_version()::integer;", &[])
@@ -132,13 +128,13 @@ impl Database {
         &self,
         group_id: &str,
         range: &Range,
-    ) -> Result<Vec<PgInteger>, DialogueError> {
+    ) -> Result<Vec<DbInteger>, DialogueError> {
         match self.connection.query(
             include_str!("queries/list_article_numbers.sql"),
             &[&group_id, &range.from, &range.to],
         ) {
             Ok(rows) => {
-                let article_numbers: Vec<PgInteger> =
+                let article_numbers: Vec<DbInteger> =
                     rows.iter().map(|row| row.get("f_number")).collect();
                 Ok(article_numbers)
             }
