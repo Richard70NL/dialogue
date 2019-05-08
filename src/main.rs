@@ -5,6 +5,7 @@ mod constants;
 mod database;
 mod error;
 mod log;
+mod range;
 mod response;
 mod server;
 mod session;

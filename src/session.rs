@@ -2,7 +2,6 @@
 
 use crate::command::Command;
 use crate::command::Command::*;
-use crate::command::Range;
 use crate::constants::env::*;
 use crate::constants::response::*;
 use crate::database::ArticlePointer;
@@ -10,6 +9,7 @@ use crate::database::Database;
 use crate::database::Group;
 use crate::error::DialogueError;
 use crate::error::DialogueErrorType::*;
+use crate::range::Range;
 use crate::text::s;
 use crate::text::so;
 use crate::text::Text::*;

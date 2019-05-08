@@ -1,8 +1,8 @@
 /************************************************************************************************/
 
-use crate::command::Range;
 use crate::error::DialogueError;
 use crate::error::DialogueErrorType::*;
+use crate::range::Range;
 use crate::text::so;
 use crate::text::Text::*;
 use crate::types::*;
