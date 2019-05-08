@@ -6,6 +6,7 @@ use crate::constants::env::*;
 use crate::constants::response::*;
 use crate::data::ArticlePointer;
 use crate::data::Group;
+use crate::data::GroupId;
 use crate::data::Range;
 use crate::database::Database;
 use crate::error::DialogueError;
@@ -222,7 +223,7 @@ impl<'a> Session<'a> {
         &mut self,
         peer_addr: SocketAddr,
         command: &Command,
-        group_id: &str,
+        group_id: &GroupId,
     ) -> Result<Group, DialogueError> {
         match self.database.get_group(group_id) {
             Ok(group) => {
@@ -261,7 +262,7 @@ impl<'a> Session<'a> {
         &mut self,
         peer_addr: SocketAddr,
         command: &Command,
-        group_id: &str,
+        group_id: &GroupId,
     ) -> Result<(), DialogueError> {
         match self.select_group(peer_addr, command, group_id) {
             Err(error) => match error.get_type() {
@@ -277,7 +278,7 @@ impl<'a> Session<'a> {
                         &group.article_count.to_string(),
                         &group.low_water_mark.to_string(),
                         &group.high_water_mark.to_string(),
-                        &group.group_id,
+                        &group.group_id.to_string(),
                     ],
                 )?;
                 Ok(())
@@ -291,14 +292,14 @@ impl<'a> Session<'a> {
         &mut self,
         peer_addr: SocketAddr,
         command: &Command,
-        group_id: &Option<String>,
+        group_id: &Option<GroupId>,
         range: &Option<Range>,
     ) -> Result<(), DialogueError> {
-        let group_id: String = match group_id {
-            Some(gid) => gid.to_string(),
+        let group_id: GroupId = match group_id {
+            Some(gid) => gid.clone(),
             None => match &self.current_article {
                 Some(ap) => ap.group_id.clone(),
-                None => String::new(),
+                None => GroupId::from(""),
             },
         };
 
@@ -320,7 +321,7 @@ impl<'a> Session<'a> {
                             &group.article_count.to_string(),
                             &group.low_water_mark.to_string(),
                             &group.high_water_mark.to_string(),
-                            &group.group_id,
+                            &group.group_id.to_string(),
                         ],
                     )?;
 
@@ -332,7 +333,10 @@ impl<'a> Session<'a> {
                         },
                     };
 
-                    match self.database.list_article_numbers(&group.group_id, &range) {
+                    match self
+                        .database
+                        .list_article_numbers(&group.group_id.to_string(), &range)
+                    {
                         Err(error) => Err(error),
                         Ok(article_numbers) => {
                             for nr in article_numbers {

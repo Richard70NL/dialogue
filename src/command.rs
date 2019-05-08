@@ -1,5 +1,6 @@
 /************************************************************************************************/
 
+use crate::data::GroupId;
 use crate::data::Range;
 use crate::error::DialogueError;
 use crate::types::*;
@@ -12,8 +13,8 @@ pub enum Command {
     Capabilities,
     Help,
     Date,
-    Group(String),
-    ListGroup(Option<String>, Option<Range>),
+    Group(GroupId),
+    ListGroup(Option<GroupId>, Option<Range>),
     Unknown(Vec<String>),
     Invalid(Vec<String>),
 }
@@ -36,14 +37,14 @@ impl Command {
                 "date" => Command::Date,
                 "group" => {
                     if command.len() > 1 {
-                        Command::Group(command[1].to_lowercase())
+                        Command::Group(GroupId::from(&command[1]))
                     } else {
                         Command::Invalid(command)
                     }
                 }
                 "listgroup" => {
                     if command.len() > 1 {
-                        let group_id = command[1].to_lowercase();
+                        let group_id = GroupId::from(&command[1]);
 
                         if command.len() > 2 {
                             match parse_range(&command[2]) {

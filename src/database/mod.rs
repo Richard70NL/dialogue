@@ -1,6 +1,7 @@
 /************************************************************************************************/
 
 use crate::data::Group;
+use crate::data::GroupId;
 use crate::data::Range;
 use crate::error::DialogueError;
 use crate::error::DialogueErrorType::*;
@@ -84,19 +85,20 @@ impl Database {
 
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn get_group(&self, group_str: &str) -> Result<Group, DialogueError> {
-        match self
-            .connection
-            .query(include_str!("queries/get_group.sql"), &[&group_str])
-        {
+    pub fn get_group(&self, group_id: &GroupId) -> Result<Group, DialogueError> {
+        match self.connection.query(
+            include_str!("queries/get_group.sql"),
+            &[&group_id.to_string()],
+        ) {
             Ok(rows) => {
                 if rows.is_empty() {
                     Err(DialogueError::new(so(ErrorNoSuchGroup)).set_type(NoSuchGroup))
                 } else {
                     let row = rows.get(0);
+                    let group_id_string: String = row.get("f_group_id");
 
                     Ok(Group {
-                        group_id: row.get("f_group_id"),
+                        group_id: GroupId::from(&group_id_string),
                         article_count: row.get("f_article_count"),
                         low_water_mark: row.get("f_low_water_mark"),
                         high_water_mark: row.get("f_high_water_mark"),
