@@ -1,8 +1,9 @@
 /************************************************************************************************/
 
+use crate::data::Group;
+use crate::data::Range;
 use crate::error::DialogueError;
 use crate::error::DialogueErrorType::*;
-use crate::range::Range;
 use crate::text::so;
 use crate::text::Text::*;
 use crate::types::*;
@@ -13,22 +14,6 @@ use postgres::TlsMode;
 
 pub struct Database {
     connection: Connection,
-}
-
-/************************************************************************************************/
-
-pub struct ArticlePointer {
-    pub group_id: DbText,
-    pub article_nr: DbInteger,
-}
-
-/************************************************************************************************/
-
-pub struct Group {
-    pub group_id: DbText,
-    pub article_count: DbInteger,
-    pub low_water_mark: DbInteger,
-    pub high_water_mark: DbInteger,
 }
 
 /************************************************************************************************/
