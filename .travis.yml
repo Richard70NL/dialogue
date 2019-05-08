@@ -1,9 +1,19 @@
 language: rust
 cache: cargo
 
+services:
+  - postgresql
+
+before_script:
+  - psql -c 'create user dialogue_test with login nosuperuser inherit nocreatedb nocreaterole noreplication;' -U postgres
+  - psql -c 'create database dialogue_test with owner dialogue_test;' -U postgres
+  - psql -c 'drop schema if exists dialogue cascade;' -d dialogue_test -U dialogue_test
+
 script:
   - cargo build --verbose
   - cargo build --verbose --release
+  - cargo run -- install --verbose
+  - cargo test
 
 rust:
   - stable
