@@ -12,7 +12,7 @@ before_script:
 script:
   - cargo build --verbose
   - cargo build --verbose --release
-  - cargo run -- install --verbose --test-data
+  - cargo run -- install --verbose --test-data --database-url=postgresql://dialogue_test@localhost/dialogue_test
   - cargo test
 
 rust:
