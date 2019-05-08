@@ -6,14 +6,19 @@ services:
 
 before_script:
   - psql -c 'create user dialogue_test with login nosuperuser inherit nocreatedb nocreaterole noreplication;' -U postgres
+    if os = linux
   - psql -c 'create database dialogue_test with owner dialogue_test;' -U postgres
+    if os = linux
   - psql -c 'drop schema if exists dialogue cascade;' -d dialogue_test -U dialogue_test
+    if os = linux
 
 script:
   - cargo build --verbose
   - cargo build --verbose --release
   - cargo run -- install --verbose --test-data --database-url=postgresql://dialogue_test@localhost/dialogue_test
+    if os = linux
   - cargo test
+    if os = linux
 
 rust:
   - stable
