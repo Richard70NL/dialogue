@@ -10,7 +10,9 @@ addons:
     - postgresql
 
 before_script:
+  - if [ "$TRAVIS_OS_NAME" == "osx" ] ; then brew services list ; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ] ; then brew services start postgresql ; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ] ; then brew services list ; fi
   - if [ "$TRAVIS_OS_NAME" != "windows" ] ; then psql -c 'create user dialogue_test with login nosuperuser inherit nocreatedb nocreaterole noreplication;' -U postgres ; fi
   - if [ "$TRAVIS_OS_NAME" != "windows" ] ; then psql -c 'create database dialogue_test with owner dialogue_test;' -U postgres ; fi
   - if [ "$TRAVIS_OS_NAME" != "windows" ] ; then psql -c 'drop schema if exists dialogue cascade;' -d dialogue_test -U dialogue_test ; fi
