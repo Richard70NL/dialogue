@@ -1,5 +1,10 @@
 /************************************************************************************************/
 
+use crate::error::DialogueError;
+use crate::types::DbInteger;
+
+/************************************************************************************************/
+
 pub fn string_format(text: String, values: &[&str]) -> String {
     let mut msg = text;
 
@@ -20,6 +25,19 @@ pub fn string_format(text: String, values: &[&str]) -> String {
 
 pub fn str_format(text: &str, values: &[&str]) -> String {
     string_format(String::from(text), values)
+}
+
+/************************************************************************************************/
+
+pub fn parse_integer(s: &str, default: DbInteger) -> Result<DbInteger, DialogueError> {
+    if s.is_empty() {
+        Ok(default)
+    } else {
+        match s.parse::<DbInteger>() {
+            Ok(i) => Ok(i),
+            Err(e) => Err(DialogueError::new(format! {"{:?}", e})),
+        }
+    }
 }
 
 /************************************************************************************************/

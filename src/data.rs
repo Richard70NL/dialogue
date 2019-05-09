@@ -1,6 +1,8 @@
 /************************************************************************************************/
 
+use crate::error::DialogueError;
 use crate::types::*;
+use crate::util::parse_integer;
 
 /************************************************************************************************/
 
@@ -33,6 +35,30 @@ pub struct ArticlePointer {
 #[derive(Debug, Clone)]
 pub struct GroupId {
     parts: Vec<String>,
+}
+
+/************************************************************************************************/
+
+impl Range {
+    /*------------------------------------------------------------------------------------------*/
+
+    pub fn parse(range_str: &str) -> Result<Range, DialogueError> {
+        let v: Vec<&str> = range_str.split('-').collect();
+
+        if v.is_empty() {
+            Ok(Range { from: 0, to: 0 })
+        } else if v.len() == 1 {
+            let nr = parse_integer(v[0], 0)?;
+            Ok(Range { from: nr, to: nr })
+        } else {
+            Ok(Range {
+                from: parse_integer(v[0], 0)?,
+                to: parse_integer(v[1], MAX_DB_INTEGER)?,
+            })
+        }
+    }
+
+    /*------------------------------------------------------------------------------------------*/
 }
 
 /************************************************************************************************/

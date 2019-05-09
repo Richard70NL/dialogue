@@ -2,8 +2,6 @@
 
 use crate::data::GroupId;
 use crate::data::Range;
-use crate::error::DialogueError;
-use crate::types::*;
 
 /************************************************************************************************/
 
@@ -47,7 +45,7 @@ impl Command {
                         let group_id = GroupId::from(&command[1]);
 
                         if command.len() > 2 {
-                            match parse_range(&command[2]) {
+                            match Range::parse(&command[2]) {
                                 Ok(range) => Command::ListGroup(Some(group_id), Some(range)),
                                 Err(_) => Command::Invalid(command),
                             }
@@ -66,35 +64,6 @@ impl Command {
     }
 
     /*------------------------------------------------------------------------------------------*/
-}
-
-fn parse_range(range_str: &str) -> Result<Range, DialogueError> {
-    let v: Vec<&str> = range_str.split('-').collect();
-
-    if v.is_empty() {
-        Ok(Range { from: 0, to: 0 })
-    } else if v.len() == 1 {
-        let nr = parse_integer(v[0], 0)?;
-        Ok(Range { from: nr, to: nr })
-    } else {
-        Ok(Range {
-            from: parse_integer(v[0], 0)?,
-            to: parse_integer(v[1], MAX_DB_INTEGER)?,
-        })
-    }
-}
-
-/************************************************************************************************/
-
-fn parse_integer(s: &str, default: DbInteger) -> Result<DbInteger, DialogueError> {
-    if s.is_empty() {
-        Ok(default)
-    } else {
-        match s.parse::<DbInteger>() {
-            Ok(i) => Ok(i),
-            Err(e) => Err(DialogueError::new(format! {"{:?}", e})),
-        }
-    }
 }
 
 /************************************************************************************************/
