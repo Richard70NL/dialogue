@@ -10,12 +10,10 @@ addons:
     - postgresql
 
 before_script:
-  - if [ "$TRAVIS_OS_NAME" == "osx" ] ; then brew services list ; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ] ; then brew services start postgresql ; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ] ; then brew services list ; fi
-  - if [ "$TRAVIS_OS_NAME" != "windows" ] ; then psql -c 'create user dialogue_test with login nosuperuser inherit nocreatedb nocreaterole noreplication;' ; fi
-  - if [ "$TRAVIS_OS_NAME" != "windows" ] ; then psql -c 'create database dialogue_test with owner dialogue_test;' ; fi
-  - if [ "$TRAVIS_OS_NAME" != "windows" ] ; then psql -c 'drop schema if exists dialogue cascade;' -d dialogue_test -U dialogue_test ; fi
+  - if [ "$TRAVIS_OS_NAME" != "windows" ] ; then createuser dialogue_test ; fi
+  - if [ "$TRAVIS_OS_NAME" != "windows" ] ; then createdb --owner=dialogue_test dialogue_test ; fi
+  - if [ "$TRAVIS_OS_NAME" != "windows" ] ; then psql --command='drop schema if exists dialogue cascade;' --dbname=dialogue_test --username=dialogue_test ; fi
 
 script:
   - cargo build --verbose
