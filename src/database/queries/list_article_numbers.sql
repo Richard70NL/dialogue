@@ -1,7 +1,7 @@
 select
   f_number
 from
-  t_group_article
+  dialogue.t_group_article
 where
   f_group_id = $1
   and f_number >= $2

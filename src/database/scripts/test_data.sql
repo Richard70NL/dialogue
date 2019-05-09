@@ -1,17 +1,17 @@
 -- *****************************************************************************
 
-insert into t_group(f_group_id, f_description, f_allowed, f_moderated)
+insert into dialogue.t_group(f_group_id, f_description, f_allowed, f_moderated)
   values('local.test', 'Local testing group.', true, false);
-insert into t_group(f_group_id, f_description, f_allowed, f_moderated)
+insert into dialogue.t_group(f_group_id, f_description, f_allowed, f_moderated)
   values('local.test2', 'Secondary local testing group.', false, false);
-insert into t_group(f_group_id, f_description, f_allowed, f_moderated)
+insert into dialogue.t_group(f_group_id, f_description, f_allowed, f_moderated)
   values('local.dialogue.announce', 'Announcement group for the Dialogue NNTP server.', true, true);
-insert into t_group(f_group_id, f_description, f_allowed, f_moderated)
+insert into dialogue.t_group(f_group_id, f_description, f_allowed, f_moderated)
   values('local.dialogue.general', 'General discussion group about the Dialogue NNTP server.', true, false);
 
 -- *****************************************************************************
 
-insert into t_article(f_message_id, f_body, f_path, f_from, f_subject, f_date)
+insert into dialogue.t_article(f_message_id, f_body, f_path, f_from, f_subject, f_date)
   values(
     'test-message-1@development.dialogue.richard70.nl',
     'This is test message 1.',
@@ -21,14 +21,14 @@ insert into t_article(f_message_id, f_body, f_path, f_from, f_subject, f_date)
     now()
   );
 
-insert into t_group_article(f_group_id, f_message_id, f_number)
+insert into dialogue.t_group_article(f_group_id, f_message_id, f_number)
   values('local.test', 'test-message-1@development.dialogue.richard70.nl', 1);
 
-update t_group set f_sequence = 1 where f_group_id = 'local.test';
+update dialogue.t_group set f_sequence = 1 where f_group_id = 'local.test';
 
 -- *****************************************************************************
 
-insert into t_article(f_message_id, f_body, f_path, f_from, f_subject, f_date)
+insert into dialogue.t_article(f_message_id, f_body, f_path, f_from, f_subject, f_date)
   values(
     'test-message-2@development.dialogue.richard70.nl',
     'This is test message 2.',
@@ -38,13 +38,13 @@ insert into t_article(f_message_id, f_body, f_path, f_from, f_subject, f_date)
     now()
   );
 
-insert into t_group_article(f_group_id, f_message_id, f_number)
+insert into dialogue.t_group_article(f_group_id, f_message_id, f_number)
   values('local.test', 'test-message-2@development.dialogue.richard70.nl', 2);
 
-insert into t_group_article(f_group_id, f_message_id, f_number)
+insert into dialogue.t_group_article(f_group_id, f_message_id, f_number)
   values('local.test2', 'test-message-2@development.dialogue.richard70.nl', 1);
 
-update t_group set f_sequence = 2 where f_group_id = 'local.test';
-update t_group set f_sequence = 1 where f_group_id = 'local.test2';
+update dialogue.t_group set f_sequence = 2 where f_group_id = 'local.test';
+update dialogue.t_group set f_sequence = 1 where f_group_id = 'local.test2';
 
 -- *****************************************************************************

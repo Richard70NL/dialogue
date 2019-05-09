@@ -13,7 +13,7 @@ from
       min(f_number) as f_low_water_mark,
       max(f_number) as f_high_water_mark
     from
-      t_group_article
+      dialogue.t_group_article
     group by f_group_id
   ) q2
   on q1.f_group_id = q2.f_group_id

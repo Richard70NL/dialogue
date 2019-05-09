@@ -4,16 +4,21 @@ cache: cargo
 services:
   - postgresql
 
+addons:
+  homebrew:
+    packages:
+    - postgres
+
 before_script:
-  - if [ "$TRAVIS_OS_NAME" == "linux" ] ; then psql -c 'create user dialogue_test with login nosuperuser inherit nocreatedb nocreaterole noreplication;' -U postgres ; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ] ; then psql -c 'create database dialogue_test with owner dialogue_test;' -U postgres ; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ] ; then psql -c 'drop schema if exists dialogue cascade;' -d dialogue_test -U dialogue_test ; fi
+  - if [ "$TRAVIS_OS_NAME" != "windows" ] ; then psql -c 'create user dialogue_test with login nosuperuser inherit nocreatedb nocreaterole noreplication;' -U postgres ; fi
+  - if [ "$TRAVIS_OS_NAME" != "windows" ] ; then psql -c 'create database dialogue_test with owner dialogue_test;' -U postgres ; fi
+  - if [ "$TRAVIS_OS_NAME" != "windows" ] ; then psql -c 'drop schema if exists dialogue cascade;' -d dialogue_test -U dialogue_test ; fi
 
 script:
   - cargo build --verbose
   - cargo build --verbose --release
-  - if [ "$TRAVIS_OS_NAME" == "linux" ] ; then cargo run -- install --verbose --test-data --database-url=postgresql://dialogue_test@localhost/dialogue_test ; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ] ; then cargo test ; fi
+  - if [ "$TRAVIS_OS_NAME" != "windows" ] ; then cargo run -- install --verbose --test-data --database-url=postgresql://dialogue_test@localhost/dialogue_test ; fi
+  - if [ "$TRAVIS_OS_NAME" != "windows" ] ; then cargo test ; fi
 
 rust:
   - stable
