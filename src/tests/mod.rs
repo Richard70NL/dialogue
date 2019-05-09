@@ -10,6 +10,12 @@ mod group_id_tests;
 mod range_tests;
 
 #[cfg(test)]
+mod server_tests;
+
+#[cfg(test)]
+mod helper_functions;
+
+#[cfg(test)]
 mod util_tests;
 
 /************************************************************************************************/

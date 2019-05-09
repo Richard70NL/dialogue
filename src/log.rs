@@ -73,6 +73,7 @@ impl LogMessage {
         line.push_str(separator);
         line.push_str(self.message.as_str());
 
+        #[cfg(not(test))]
         match &self.message_type {
             LogMessageType::Log => println!("L{}{}", separator, line),
             LogMessageType::Error => eprintln!("E{}{}", separator, line),
