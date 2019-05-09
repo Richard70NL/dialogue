@@ -5,8 +5,17 @@ use crate::data::Range;
 /************************************************************************************************/
 
 #[test]
-fn empty_test() {
+fn empty_test_1() {
     let range = Range::parse("").unwrap();
+    assert_eq!(range.from, 0);
+    assert_eq!(range.to, std::i32::MAX);
+}
+
+/************************************************************************************************/
+
+#[test]
+fn empty_test_2() {
+    let range = Range::parse("-").unwrap();
     assert_eq!(range.from, 0);
     assert_eq!(range.to, std::i32::MAX);
 }
@@ -16,9 +25,17 @@ fn empty_test() {
 #[test]
 fn produce_error() {
     match Range::parse("this_will_produce-an_error") {
-        Ok(_) => assert!(false, "an error should have been produces"),
-        Err(_) => assert!(true, "an error should have been produced"),
+        Ok(_) => assert!(false),
+        Err(_) => assert!(true),
     }
+}
+
+/************************************************************************************************/
+#[test]
+fn exact() {
+    let range = Range::parse("18").unwrap();
+    assert_eq!(range.from, 18);
+    assert_eq!(range.to, 18);
 }
 
 /************************************************************************************************/

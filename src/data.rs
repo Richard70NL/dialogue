@@ -45,8 +45,11 @@ impl Range {
     pub fn parse(range_str: &str) -> Result<Range, DialogueError> {
         let v: Vec<&str> = range_str.split('-').collect();
 
-        if v.is_empty() {
-            Ok(Range { from: 0, to: 0 })
+        if range_str.is_empty() || v.is_empty() {
+            Ok(Range {
+                from: 0,
+                to: MAX_DB_INTEGER,
+            })
         } else if v.len() == 1 {
             let nr = parse_integer(v[0], 0)?;
             Ok(Range { from: nr, to: nr })
