@@ -20,7 +20,7 @@ script:
   - cargo build --verbose
   - cargo build --verbose --release
   - if [ "$TRAVIS_OS_NAME" != "windows" ] ; then cargo run -- install --verbose --test-data --database-url=postgresql://dialogue_test@localhost/dialogue_test ; fi
-  - if [ "$TRAVIS_OS_NAME" != "windows" ] ; then sudo cargo test ; fi
+  - if [ "$TRAVIS_OS_NAME" != "windows" ] ; then cargo test ; fi
 
 rust:
   - stable

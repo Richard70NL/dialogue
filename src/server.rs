@@ -80,10 +80,11 @@ impl Server {
 
     /*------------------------------------------------------------------------------------------*/
 
-    fn accept_by_address(&self, _addr: &SocketAddr) -> bool {
+    fn accept_by_address(&self, addr: &SocketAddr) -> bool {
         // TODO: implement black/white list functionality here
+        // for now only connection from 127.0.0.1 are accepted
 
-        true
+        addr.ip().to_string().eq("127.0.0.1")
     }
 
     /*------------------------------------------------------------------------------------------*/

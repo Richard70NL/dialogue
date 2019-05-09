@@ -13,7 +13,8 @@ use std::time::Duration;
 
 /************************************************************************************************/
 
-const TEST_SERVER_ADDRESS: &str = "127.0.0.1:119";
+const TEST_BINDING_ADDRESS: &str = "0.0.0.0:119";
+const TEST_CONNECTION_ADDRESS: &str = "127.0.0.1:119";
 const TEST_DATA_BASE_URL: &str = "postgresql://dialogue_test@localhost/dialogue_test";
 const TEST_READ_TIMEOUT: u64 = 10;
 
@@ -34,7 +35,7 @@ fn start_server_in_thread() {
     let _handle = spawn(move || {
         let mut server = Server::new();
         server.set_binding_address(
-            SocketAddr::from_str(TEST_SERVER_ADDRESS)
+            SocketAddr::from_str(TEST_BINDING_ADDRESS)
                 .expect("could not set the binding address of the server"),
         );
         server.set_database_url(String::from(TEST_DATA_BASE_URL));
@@ -51,7 +52,7 @@ fn start_server_in_thread() {
 /************************************************************************************************/
 
 fn connect_to_server() -> Result<TcpStream, std::io::Error> {
-    match TcpStream::connect(TEST_SERVER_ADDRESS) {
+    match TcpStream::connect(TEST_CONNECTION_ADDRESS) {
         Ok(stream) => {
             stream
                 .set_read_timeout(Some(Duration::new(TEST_READ_TIMEOUT, 0)))
