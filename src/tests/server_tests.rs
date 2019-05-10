@@ -5,6 +5,7 @@ use crate::tests::helper_functions::response_code;
 use std::io::BufRead;
 use std::io::BufReader;
 use std::io::BufWriter;
+use std::io::Write;
 use std::net::SocketAddr;
 use std::net::TcpStream;
 use std::str::FromStr;
@@ -70,7 +71,17 @@ fn connect_to_server() -> Result<TcpStream, std::io::Error> {
 
 fn start_testing(stream: TcpStream) {
     let mut reader = BufReader::new(&stream);
-    let _writer = BufWriter::new(&stream);
+    let mut writer = BufWriter::new(&stream);
+
+    test_001_initial_connection(&mut reader);
+    test_999_quit_connection(&mut reader, &mut writer);
+
+    // TODO: add some more testing
+}
+
+/************************************************************************************************/
+
+fn test_001_initial_connection(reader: &mut BufReader<&TcpStream>) {
     let mut line = String::new();
 
     reader
@@ -78,7 +89,30 @@ fn start_testing(stream: TcpStream) {
         .expect("could not read the connection response");
 
     assert_eq!(response_code(&line), 201, "could not connect to the server");
-    // TODO: add some more testing
+}
+
+/************************************************************************************************/
+
+fn test_999_quit_connection(
+    reader: &mut BufReader<&TcpStream>,
+    writer: &mut BufWriter<&TcpStream>,
+) {
+    let mut line = String::new();
+
+    writer
+        .write(b"quit\n")
+        .expect("could not send quit command");
+    writer.flush().expect("could not flush the writer");
+
+    reader
+        .read_line(&mut line)
+        .expect("could not read the quit response");
+
+    assert_eq!(
+        response_code(&line),
+        205,
+        "could not quit savely from the server"
+    );
 }
 
 /************************************************************************************************/
