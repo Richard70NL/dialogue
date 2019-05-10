@@ -56,7 +56,7 @@ fn start_server_in_thread() {
             Ok(()) => assert!(true, "server started correctly"),
             Err(e) => {
                 e.show();
-                assert!(false, "problem starting the server");
+                assert!(false, "problem starting the server on address {}", address);
             }
         }
     });
