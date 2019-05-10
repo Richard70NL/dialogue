@@ -2,6 +2,7 @@
 
 use crate::server::Server;
 use crate::tests::helper_functions::response_code;
+use std::env;
 use std::io::BufRead;
 use std::io::BufReader;
 use std::io::BufWriter;
@@ -14,6 +15,7 @@ use std::time::Duration;
 /************************************************************************************************/
 
 const TEST_BINDING_ADDRESS: &str = "0.0.0.0:119";
+const TEST_TRAVIS_BINDING_ADDRESS: &str = "127.0.0.1:119";
 const TEST_CONNECTION_ADDRESS: &str = "127.0.0.1:119";
 const TEST_DATA_BASE_URL: &str = "postgresql://dialogue_test@localhost/dialogue_test";
 const TEST_READ_TIMEOUT: u64 = 10;
@@ -34,11 +36,22 @@ fn full_server_test() {
 fn start_server_in_thread() {
     let _handle = spawn(move || {
         let mut server = Server::new();
+        let address = match env::var("TRAVIS_OS_NAME") {
+            Ok(val) => {
+                if val == "linux" {
+                    TEST_TRAVIS_BINDING_ADDRESS
+                } else {
+                    TEST_BINDING_ADDRESS
+                }
+            }
+            Err(_) => TEST_BINDING_ADDRESS,
+        };
+
         server.set_binding_address(
-            SocketAddr::from_str(TEST_BINDING_ADDRESS)
-                .expect("could not set the binding address of the server"),
+            SocketAddr::from_str(address).expect("could not set the binding address of the server"),
         );
         server.set_database_url(String::from(TEST_DATA_BASE_URL));
+
         match server.start() {
             Ok(()) => assert!(true, "server started correctly"),
             Err(e) => {
