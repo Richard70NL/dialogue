@@ -26,7 +26,7 @@ pub fn split_line(val: &str) -> Vec<String> {
 
 /************************************************************************************************/
 
-pub fn get_env_var(key: &str) -> String {
+pub fn _get_env_var(key: &str) -> String {
     match env::var(key) {
         Ok(val) => val,
         Err(e) => {
