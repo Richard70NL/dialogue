@@ -36,9 +36,19 @@ fn full_server_test() {
 
     // perform all tests
     test_001_initial_connection(&mut client);
+
+    test_101_capabilities_command();
+    test_102_help_command();
+    test_103_date_command();
+    test_104_group_command();
+    test_105_listgroup_command();
+
+    test_901_unkown_command();
+    test_902_invalid_command();
+
     test_999_quit_connection(&mut client);
 
-    // TODO: add some more testing
+    // TODO: keep adding tests when adding more commands and server functionality
 }
 
 /************************************************************************************************/
@@ -65,6 +75,48 @@ fn start_server_in_thread(address: SocketAddr) {
 fn test_001_initial_connection(client: &mut TestClient) {
     let response = client.get_single_line_response();
     assert_eq!(response.get_code(), 201, "could not connect to the server");
+}
+
+/************************************************************************************************/
+
+fn test_101_capabilities_command() {
+    // TODO: implement capabilities command tests
+}
+
+/************************************************************************************************/
+
+fn test_102_help_command() {
+    // TODO: implement help command tests
+}
+
+/************************************************************************************************/
+
+fn test_103_date_command() {
+    // TODO: implement date command tests
+}
+
+/************************************************************************************************/
+
+fn test_104_group_command() {
+    // TODO: implement group command tests
+}
+
+/************************************************************************************************/
+
+fn test_105_listgroup_command() {
+    // TODO: implement listgroup command tests
+}
+
+/************************************************************************************************/
+
+fn test_901_unkown_command() {
+    // TODO: implement unknown command tests
+}
+
+/************************************************************************************************/
+
+fn test_902_invalid_command() {
+    // TODO: implement invalid command tests
 }
 
 /************************************************************************************************/
