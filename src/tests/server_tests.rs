@@ -28,9 +28,18 @@ fn full_server_test() {
         SocketAddr::from_str(TEST_BINDING_ADDRESS).expect("could not create a socket address"),
     );
 
-    match connect_to_server() {
-        Ok(stream) => start_testing(stream),
+    // create a simple reader/writer client and connect to the above server
+    match connect_to_server(TEST_CONNECTION_ADDRESS, TEST_READ_TIMEOUT) {
         Err(e) => assert!(false, e),
+        Ok(stream) => {
+            let mut reader = BufReader::new(&stream);
+            let mut writer = BufWriter::new(&stream);
+
+            test_001_initial_connection(&mut reader);
+            test_999_quit_connection(&mut reader, &mut writer);
+
+            // TODO: add some more testing
+        }
     }
 }
 
@@ -55,28 +64,16 @@ fn start_server_in_thread(address: SocketAddr) {
 
 /************************************************************************************************/
 
-fn connect_to_server() -> Result<TcpStream, std::io::Error> {
-    match TcpStream::connect(TEST_CONNECTION_ADDRESS) {
+fn connect_to_server(address_str: &str, read_timeout: u64) -> Result<TcpStream, std::io::Error> {
+    match TcpStream::connect(address_str) {
         Ok(stream) => {
             stream
-                .set_read_timeout(Some(Duration::new(TEST_READ_TIMEOUT, 0)))
+                .set_read_timeout(Some(Duration::new(read_timeout, 0)))
                 .expect("could not set the read timeout");
             Ok(stream)
         }
         Err(e) => Err(e),
     }
-}
-
-/************************************************************************************************/
-
-fn start_testing(stream: TcpStream) {
-    let mut reader = BufReader::new(&stream);
-    let mut writer = BufWriter::new(&stream);
-
-    test_001_initial_connection(&mut reader);
-    test_999_quit_connection(&mut reader, &mut writer);
-
-    // TODO: add some more testing
 }
 
 /************************************************************************************************/
