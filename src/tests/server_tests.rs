@@ -1,11 +1,7 @@
 /************************************************************************************************/
 
 use crate::server::Server;
-use crate::tests::helper_functions::response_code;
-use std::io::BufRead;
-use std::io::BufReader;
-use std::io::BufWriter;
-use std::io::Write;
+use crate::tests::test_client::TestClient;
 use std::net::SocketAddr;
 use std::net::TcpStream;
 use std::str::FromStr;
@@ -29,18 +25,20 @@ fn full_server_test() {
     );
 
     // create a simple reader/writer client and connect to the above server
-    match connect_to_server(TEST_CONNECTION_ADDRESS, TEST_READ_TIMEOUT) {
-        Err(e) => assert!(false, e),
-        Ok(stream) => {
-            let mut reader = BufReader::new(&stream);
-            let mut writer = BufWriter::new(&stream);
+    let stream =
+        TcpStream::connect(TEST_CONNECTION_ADDRESS).expect("could not connect to the server");
 
-            test_001_initial_connection(&mut reader);
-            test_999_quit_connection(&mut reader, &mut writer);
+    stream
+        .set_read_timeout(Some(Duration::new(TEST_READ_TIMEOUT, 0)))
+        .expect("could not set the read timeout");
 
-            // TODO: add some more testing
-        }
-    }
+    let mut client = TestClient::new(&stream);
+
+    // perform all tests
+    test_001_initial_connection(&mut client);
+    test_999_quit_connection(&mut client);
+
+    // TODO: add some more testing
 }
 
 /************************************************************************************************/
@@ -64,49 +62,19 @@ fn start_server_in_thread(address: SocketAddr) {
 
 /************************************************************************************************/
 
-fn connect_to_server(address_str: &str, read_timeout: u64) -> Result<TcpStream, std::io::Error> {
-    match TcpStream::connect(address_str) {
-        Ok(stream) => {
-            stream
-                .set_read_timeout(Some(Duration::new(read_timeout, 0)))
-                .expect("could not set the read timeout");
-            Ok(stream)
-        }
-        Err(e) => Err(e),
-    }
+fn test_001_initial_connection(client: &mut TestClient) {
+    let response = client.get_single_line_response();
+    assert_eq!(response.get_code(), 201, "could not connect to the server");
 }
 
 /************************************************************************************************/
 
-fn test_001_initial_connection(reader: &mut BufReader<&TcpStream>) {
-    let mut line = String::new();
-
-    reader
-        .read_line(&mut line)
-        .expect("could not read the connection response");
-
-    assert_eq!(response_code(&line), 201, "could not connect to the server");
-}
-
-/************************************************************************************************/
-
-fn test_999_quit_connection(
-    reader: &mut BufReader<&TcpStream>,
-    writer: &mut BufWriter<&TcpStream>,
-) {
-    let mut line = String::new();
-
-    writer
-        .write(b"quit\n")
-        .expect("could not send quit command");
-    writer.flush().expect("could not flush the writer");
-
-    reader
-        .read_line(&mut line)
-        .expect("could not read the quit response");
+fn test_999_quit_connection(client: &mut TestClient) {
+    client.send_command("quit");
+    let response = client.get_single_line_response();
 
     assert_eq!(
-        response_code(&line),
+        response.get_code(),
         205,
         "could not quit savely from the server"
     );
