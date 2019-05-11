@@ -1,34 +1,53 @@
 /************************************************************************************************/
 
+macro_rules! sconst {
+    ($name:ident, $value:expr) => {
+        pub const $name: &str = $value;
+    };
+}
+
+/************************************************************************************************/
+
+macro_rules! rconst {
+    ($name:ident, $code:expr, $message:expr) => {
+        pub const $name: &Response = &Response {
+            code: $code,
+            message: $message,
+        };
+    };
+}
+
+/************************************************************************************************/
+
 pub mod cli {
-    pub const ARG_ADDRESS_LONG: &str = "address";
-    pub const ARG_ADDRESS_NAME: &str = "address";
-    pub const ARG_ADDRESS_SHORT: &str = "a";
-    pub const ARG_DATABASE_URL_LONG: &str = "database-url";
-    pub const ARG_DATABASE_URL_NAME: &str = "dburl";
-    pub const ARG_DATABASE_URL_SHORT: &str = "d";
-    pub const ARG_TEST_DATA_LONG: &str = "test-data";
-    pub const ARG_TEST_DATA_NAME: &str = "testdata";
-    pub const ARG_TEST_DATA_SHORT: &str = "t";
-    pub const ARG_VERBOSE_LONG: &str = "verbose";
-    pub const ARG_VERBOSE_NAME: &str = "verbose";
-    pub const ARG_VERBOSE_SHORT: &str = "v";
-    pub const COMMAND_INSTALL_NAME: &str = "install";
-    pub const COMMAND_START_NAME: &str = "start";
-    pub const COMMAND_STOP_NAME: &str = "stop";
+    sconst!(ARG_ADDRESS_LONG, "address");
+    sconst!(ARG_ADDRESS_NAME, "address");
+    sconst!(ARG_ADDRESS_SHORT, "a");
+    sconst!(ARG_DATABASE_URL_LONG, "database-url");
+    sconst!(ARG_DATABASE_URL_NAME, "dburl");
+    sconst!(ARG_DATABASE_URL_SHORT, "d");
+    sconst!(ARG_TEST_DATA_LONG, "test-data");
+    sconst!(ARG_TEST_DATA_NAME, "testdata");
+    sconst!(ARG_TEST_DATA_SHORT, "t");
+    sconst!(ARG_VERBOSE_LONG, "verbose");
+    sconst!(ARG_VERBOSE_NAME, "verbose");
+    sconst!(ARG_VERBOSE_SHORT, "v");
+    sconst!(COMMAND_INSTALL_NAME, "install");
+    sconst!(COMMAND_START_NAME, "start");
+    sconst!(COMMAND_STOP_NAME, "stop");
 }
 
 /************************************************************************************************/
 
 pub mod env {
-    pub const CARGO_PKG_NAME: &str = env!("CARGO_PKG_NAME");
-    pub const CARGO_PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
+    sconst!(CARGO_PKG_NAME, env!("CARGO_PKG_NAME"));
+    sconst!(CARGO_PKG_VERSION, env!("CARGO_PKG_VERSION"));
 }
 
 /************************************************************************************************/
 
 pub mod default {
-    pub const DATA_BASE_URL: &str = "postgresql://dialogue@localhost/dialogue";
+    sconst!(DATA_BASE_URL, "postgresql://dialogue@localhost/dialogue");
 }
 
 /************************************************************************************************/
@@ -36,58 +55,31 @@ pub mod default {
 pub mod response {
     use crate::response::Response;
 
-    pub const SERVICE_AVAILABLE_POSTING_ALLOWED: &Response = &Response {
-        code: 200,
-        message: "Service available, posting allowed.",
-    };
-    pub const SERVICE_AVAILABLE_POSTING_PROHIBITED: &Response = &Response {
-        code: 201,
-        message: "Service available, posting prohibited.",
-    };
-    pub const CONNECTION_CLOSING: &Response = &Response {
-        code: 205,
-        message: "Connection closing.",
-    };
-    pub const UNKNOWN_COMMAND: &Response = &Response {
-        code: 500,
-        message: "Unknown command.",
-    };
-    pub const INVALID_COMMAND: &Response = &Response {
-        code: 501,
-        message: "Invalid command or syntax error.",
-    };
-    pub const CAPABILITIES_LIST_FOLLOWS: &Response = &Response {
-        code: 101,
-        message: "Capability list follows.",
-    };
-    pub const HELP_TEXT_FOLLOWS: &Response = &Response {
-        code: 100,
-        message: "Help text follows.",
-    };
-    pub const SERVER_DATE_TIME: &Response = &Response {
-        code: 111,
-        message: "{1}",
-    };
-    pub const GROUP_SUCCESS: &Response = &Response {
-        code: 211,
-        message: "{1} {2} {3} {4}",
-    };
-    pub const NO_SUCH_GROUP: &Response = &Response {
-        code: 411,
-        message: "No such newsgroup.",
-    };
-    pub const INTERNAL_SERVER_ERROR: &Response = &Response {
-        code: 400,
-        message: "Internal server error.",
-    };
-    pub const NO_GROUP_SELECTED: &Response = &Response {
-        code: 412,
-        message: "No group selected.",
-    };
-    pub const LIST_GROUP_SUCCESS: &Response = &Response {
-        code: 211,
-        message: "{1} {2} {3} {4} Article numbers follow.",
-    };
+    rconst!(
+        SERVICE_AVAILABLE_POSTING_ALLOWED,
+        200,
+        "Service available, posting allowed."
+    );
+    rconst!(
+        SERVICE_AVAILABLE_POSTING_PROHIBITED,
+        201,
+        "Service available, posting prohibited."
+    );
+    rconst!(CONNECTION_CLOSING, 205, "Connection closing.");
+    rconst!(UNKNOWN_COMMAND, 500, "Unknown command.");
+    rconst!(INVALID_COMMAND, 501, "Invalid command or syntax error.");
+    rconst!(CAPABILITIES_LIST_FOLLOWS, 101, "Capability list follows.");
+    rconst!(HELP_TEXT_FOLLOWS, 100, "Help text follows.");
+    rconst!(SERVER_DATE_TIME, 111, "{1}");
+    rconst!(GROUP_SUCCESS, 211, "{1} {2} {3} {4}");
+    rconst!(NO_SUCH_GROUP, 411, "No such newsgroup.");
+    rconst!(INTERNAL_SERVER_ERROR, 400, "Internal server error.");
+    rconst!(NO_GROUP_SELECTED, 412, "No group selected.");
+    rconst!(
+        LIST_GROUP_SUCCESS,
+        211,
+        "{1} {2} {3} {4} Article numbers follow."
+    );
 }
 
 /************************************************************************************************/
