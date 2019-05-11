@@ -38,7 +38,7 @@ fn full_server_test() {
     test_001_initial_connection(&mut client);
 
     test_101_capabilities_command(&mut client);
-    test_102_help_command();
+    test_102_help_command(&mut client);
     test_103_date_command();
     test_104_group_command();
     test_105_listgroup_command();
@@ -84,7 +84,7 @@ fn test_101_capabilities_command(client: &mut TestClient) {
     assert_eq!(
         response.get_code(),
         101,
-        "invalid response code for capabilities"
+        "invalid response code for CAPABILITIES command"
     );
 
     assert_eq!(response.get_body().len(), 3, "body should contain 3 lines");
@@ -111,8 +111,21 @@ fn test_101_capabilities_command(client: &mut TestClient) {
 
 /************************************************************************************************/
 
-fn test_102_help_command() {
-    // TODO: implement help command tests
+fn test_102_help_command(client: &mut TestClient) {
+    client.send_command("help");
+
+    let response = client.get_response(true);
+
+    assert_eq!(
+        response.get_code(),
+        100,
+        "invalid response code for HELP command"
+    );
+
+    assert!(
+        !response.get_body().is_empty(),
+        "invalid response body for HELP command"
+    );
 }
 
 /************************************************************************************************/
