@@ -1,6 +1,7 @@
 /************************************************************************************************/
 
-use crate::tests::helper_functions::split_line;
+use crate::tests::util::split_line;
+use crate::tests::util::StringExtended;
 use std::io::BufRead;
 use std::io::BufReader;
 use std::io::BufWriter;
@@ -17,9 +18,10 @@ pub struct TestClient<'a> {
 
 /************************************************************************************************/
 
+#[derive(Debug)]
 pub struct TestResponse {
     parts: Vec<String>,
-    _body: Vec<String>,
+    body: Vec<String>,
 }
 
 /************************************************************************************************/
@@ -40,14 +42,26 @@ impl<'a> TestClient<'a> {
 
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn get_single_line_response(&mut self) -> TestResponse {
+    pub fn get_response(&mut self, multi_line: bool) -> TestResponse {
         let mut line = String::new();
+        let mut buffer = String::new();
 
-        self.reader
-            .read_line(&mut line)
-            .expect("could not read the connection response");
+        loop {
+            line.clear();
+            self.reader
+                .read_line(&mut line)
+                .expect("could not read the response");
+            buffer.push_str(&line);
 
-        TestResponse::parse(line)
+            if !multi_line {
+                break;
+            } else if buffer.last_line() == "." {
+                buffer = buffer.remove_last_line();
+                break;
+            }
+        }
+
+        TestResponse::parse(buffer)
     }
 
     /*------------------------------------------------------------------------------------------*/
@@ -74,7 +88,7 @@ impl TestResponse {
         if string_buffer.is_empty() {
             TestResponse {
                 parts: Vec::new(),
-                _body: Vec::new(),
+                body: Vec::new(),
             }
         } else {
             let lines: Vec<String> = string_buffer.lines().map(String::from).collect();
@@ -89,7 +103,7 @@ impl TestResponse {
                 }
             }
 
-            TestResponse { parts, _body: body }
+            TestResponse { parts, body: body }
         }
     }
 
@@ -105,6 +119,14 @@ impl TestResponse {
             }
         }
     }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    pub fn get_body(&self) -> &Vec<String> {
+        &self.body
+    }
+
+    /*------------------------------------------------------------------------------------------*/
 }
 
 /************************************************************************************************/
