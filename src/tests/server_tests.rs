@@ -43,9 +43,7 @@ fn full_server_test() {
     test_104_group_command();
     test_105_listgroup_command();
 
-    test_901_unkown_command();
-    test_902_invalid_command();
-
+    test_950_unkown_command();
     test_999_quit_connection(&mut client);
 
     // TODO: keep adding tests when adding more commands and server functionality
@@ -109,14 +107,8 @@ fn test_105_listgroup_command() {
 
 /************************************************************************************************/
 
-fn test_901_unkown_command() {
+fn test_950_unkown_command() {
     // TODO: implement unknown command tests
-}
-
-/************************************************************************************************/
-
-fn test_902_invalid_command() {
-    // TODO: implement invalid command tests
 }
 
 /************************************************************************************************/
