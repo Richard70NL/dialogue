@@ -72,6 +72,7 @@ fn start_server_in_thread(address: SocketAddr) {
 
 fn test_001_initial_connection(client: &mut TestClient) {
     let response = client.get_response(false);
+    dbg!(&response);
     assert_eq!(response.get_code(), 201, "could not connect to the server");
 }
 

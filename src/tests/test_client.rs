@@ -1,7 +1,7 @@
 /************************************************************************************************/
 
 use crate::tests::util::split_line;
-use crate::tests::util::StringExtended;
+use rich_lib::lines::*;
 use std::io::BufRead;
 use std::io::BufReader;
 use std::io::BufWriter;
@@ -55,8 +55,8 @@ impl<'a> TestClient<'a> {
 
             if !multi_line {
                 break;
-            } else if buffer.last_line() == "." {
-                buffer = buffer.remove_last_line();
+            } else if buffer.last().eq(".") {
+                buffer = buffer.remove_last();
                 break;
             }
         }
